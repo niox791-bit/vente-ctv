@@ -8,7 +8,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [
             InlineKeyboardButton(
                 "🌐 Ouvrir le site",
-                url="https://ton-site-vercel.vercel.app"
+                url="https://vente-ctv.vercel.app/"
             )
         ]
     ]

@@ -1,253 +1,186 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Vente CTV</title>
-
-<link rel="stylesheet" href="style.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Boutique Telegram Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
-
-
 <body>
 
-
-<div class="app">
-
-
-<!-- ACCUEIL -->
-
-<section id="home" class="page active">
-
-<div class="logo">
-CTV
-</div>
-
-<h1>Vente CTV</h1>
-
-<p class="subtitle">
-La marketplace premium 🇨🇮
-</p>
-
-
-<div class="welcome">
-
-<h2>Bienvenue 👋</h2>
-
-<p>
-Découvrez nos produits exclusifs.
-</p>
-
-</div>
-
-
-<h2>🔥 Produits populaires</h2>
-
-<div id="popular" class="grid"></div>
-
-
-</section>
-
-
-
-
-
-<!-- SHOP -->
-
-<section id="categories" class="page">
-
-
-<h2>🛍 Boutique</h2>
-
-
-<div class="grid">
-
-
-<div class="category" onclick="filter('GNR')">
-
-🔥
-
-<br>
-
-GNR
-
-</div>
-
-
-</div>
-
-
-<h2>Produits GNR</h2>
-
-
-<div id="products" class="grid"></div>
-
-
-</section>
-
-
-
-
-
-
-
-<!-- PANIER -->
-
-
-<section id="cart" class="page">
-
-
-<h2>🛒 Mon panier</h2>
-
-
-<div id="cartItems">
-
-Panier vide
-
-</div>
-
-
-
-<h3>
-
-Total :
-
-<span id="total">
-
-0
-
-</span>
-
-FCFA
-
-</h3>
-
-
-
-<button onclick="checkout()">
-
-Commander
-
-</button>
-
-
-</section>
-
-
-
-
-
-
-
-
-<!-- PROFIL -->
-
-
-<section id="profile" class="page">
-
-
-<h2>
-
-👤 Mon profil
-
-</h2>
-
-
-<div class="box">
-
-
-Vente CTV
-
-
-<br><br>
-
-
-Mes commandes apparaîtront ici.
-
-
-</div>
-
-
-</section>
-
-
-
-
-
-
-
-
-<!-- MENU -->
-
-<nav>
-
-
-<button onclick="openPage('home')">
-
-🏠
-
-<br>
-
-Accueil
-
-</button>
-
-
-
-<button onclick="openPage('categories')">
-
-🛍
-
-<br>
-
-Shop
-
-</button>
-
-
-
-<button onclick="openPage('cart')">
-
-🛒
-
-<br>
-
-Panier
-
-</button>
-
-
-
-<button onclick="openPage('profile')">
-
-👤
-
-<br>
-
-Profil
-
-</button>
-
-
-
-</nav>
-
-
-
-</div>
-
-
-
-
-
-<script src="app.js"></script>
-
-
+    <div id="app">
+        <div id="view-shop" class="view active">
+            <header class="app-header">
+                <div class="user-profile">
+                    <img src="https://upload.wikimedia.org/wikipedia/en/5/53/Scooby-Doo.png" alt="Mascotte" class="avatar">
+                    <div class="user-details">
+                        <span class="welcome-text">Bienvenue 👋</span>
+                        <h2 id="username">Client</h2>
+                    </div>
+                </div>
+                <button type="button" class="cart-icon-btn" id="btn-go-cart">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="cart-badge" id="cart-count">0</span>
+                </button>
+            </header>
+
+            <nav class="categories-nav">
+                <button type="button" class="cat-btn active" data-cat="all">Tous</button>
+                <button type="button" class="cat-btn" data-cat="cat1">Catégorie 1</button>
+                <button type="button" class="cat-btn" data-cat="cat2">Catégorie 2</button>
+                <button type="button" class="cat-btn" data-cat="cat3">Catégorie 3</button>
+                <button type="button" class="cat-btn" data-cat="cat4">Catégorie 4</button>
+            </nav>
+
+            <section class="hero-banner">
+                <div class="banner-content">
+                    <span class="promo-tag">Livraison Rapide</span>
+                    <h3>Commandez sur Telegram 🚀</h3>
+                    <p>Articles disponibles immédiatement à Abidjan & partout en CI.</p>
+                </div>
+            </section>
+
+            <main class="products-section">
+                <h3 class="section-title">Nos Produits</h3>
+
+                <div class="products-grid">
+                    <div class="product-card" data-category="cat1">
+                        <div class="card-image">
+                            <i class="fa-solid fa-box-open"></i>
+                            <span class="category-badge">Catégorie 1</span>
+                        </div>
+                        <div class="card-body">
+                            <h4>Produit 1</h4>
+                            <p class="product-desc">Description du produit 1.</p>
+                            <div class="card-footer">
+                                <span class="price">5 000 FCFA</span>
+                                <button type="button" class="add-btn" data-name="Produit 1" data-price="5000">
+                                    <i class="fa-solid fa-plus"></i> Ajouter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-category="cat2">
+                        <div class="card-image">
+                            <i class="fa-solid fa-bag-shopping"></i>
+                            <span class="category-badge">Catégorie 2</span>
+                        </div>
+                        <div class="card-body">
+                            <h4>Produit 2</h4>
+                            <p class="product-desc">Description du produit 2.</p>
+                            <div class="card-footer">
+                                <span class="price">12 500 FCFA</span>
+                                <button type="button" class="add-btn" data-name="Produit 2" data-price="12500">
+                                    <i class="fa-solid fa-plus"></i> Ajouter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-category="cat3">
+                        <div class="card-image">
+                            <i class="fa-solid fa-shirt"></i>
+                            <span class="category-badge">Catégorie 3</span>
+                        </div>
+                        <div class="card-body">
+                            <h4>Produit 3</h4>
+                            <p class="product-desc">Description du produit 3.</p>
+                            <div class="card-footer">
+                                <span class="price">8 000 FCFA</span>
+                                <button type="button" class="add-btn" data-name="Produit 3" data-price="8000">
+                                    <i class="fa-solid fa-plus"></i> Ajouter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-card" data-category="cat4">
+                        <div class="card-image">
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                            <span class="category-badge">Catégorie 4</span>
+                        </div>
+                        <div class="card-body">
+                            <h4>Produit 4</h4>
+                            <p class="product-desc">Description du produit 4.</p>
+                            <div class="card-footer">
+                                <span class="price">25 000 FCFA</span>
+                                <button type="button" class="add-btn" data-name="Produit 4" data-price="25000">
+                                    <i class="fa-solid fa-plus"></i> Ajouter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="bottom-bar">
+                <div class="total-info">
+                    <span>Total Panier :</span>
+                    <strong id="shop-total">0 FCFA</strong>
+                </div>
+                <button type="button" class="action-btn" id="btn-see-cart">
+                    Voir le panier <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </footer>
+        </div>
+
+        <div id="view-cart" class="view">
+            <header class="cart-header">
+                <button type="button" class="back-btn" id="btn-back-shop">
+                    <i class="fa-solid fa-arrow-left"></i> Retour
+                </button>
+                <h2>Mon Panier</h2>
+                <div style="width: 40px;"></div>
+            </header>
+
+            <main class="cart-content">
+                <section class="cart-section">
+                    <h3><i class="fa-solid fa-list-check"></i> Articles sélectionnés</h3>
+                    <div id="cart-items-list" class="cart-items-list"></div>
+                </section>
+
+                <section class="checkout-form-section">
+                    <h3><i class="fa-solid fa-location-dot"></i> Informations de livraison</h3>
+                    
+                    <div class="form-group">
+                        <label for="delivery-address"><i class="fa-solid fa-map-pin"></i> Adresse de livraison *</label>
+                        <input type="text" id="delivery-address" placeholder="Ex: Abidjan, Cocody Angré..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="order-note"><i class="fa-solid fa-comment-dots"></i> Note de commande</label>
+                        <textarea id="order-note" rows="3" placeholder="Instructions particulières..."></textarea>
+                    </div>
+                </section>
+
+                <div class="cart-summary-card">
+                    <div class="summary-row">
+                        <span>Sous-total :</span>
+                        <span id="summary-subtotal">0 FCFA</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Livraison :</span>
+                        <span>À calculer</span>
+                    </div>
+                    <hr class="divider">
+                    <div class="summary-row total">
+                        <span>Total :</span>
+                        <strong id="summary-total">0 FCFA</strong>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="bottom-bar">
+                <button type="button" class="action-btn success" id="btn-confirm-order">
+                    <i class="fa-solid fa-paper-plane"></i> Valider la commande
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
 </body>
-
-
 </html>
