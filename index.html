@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Vente CTV</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+<div class="app">
+
+
+<!-- ACCUEIL -->
+
+<section id="home" class="page active">
+
+<div class="logo">
+CTV
+</div>
+
+<h1>Vente CTV</h1>
+
+<p class="subtitle">
+La marketplace premium 🇨🇮
+</p>
+
+
+<div class="welcome">
+
+<h2>Bienvenue 👋</h2>
+
+<p>
+Découvrez nos produits exclusifs.
+</p>
+
+</div>
+
+
+<h2>🔥 Produits populaires</h2>
+
+<div id="popular" class="grid"></div>
+
+
+</section>
+
+
+
+
+
+<!-- SHOP -->
+
+<section id="categories" class="page">
+
+
+<h2>🛍 Boutique</h2>
+
+
+<div class="grid">
+
+
+<div class="category" onclick="filter('GNR')">
+
+🔥
+
+<br>
+
+GNR
+
+</div>
+
+
+</div>
+
+
+<h2>Produits GNR</h2>
+
+
+<div id="products" class="grid"></div>
+
+
+</section>
+
+
+
+
+
+
+
+<!-- PANIER -->
+
+
+<section id="cart" class="page">
+
+
+<h2>🛒 Mon panier</h2>
+
+
+<div id="cartItems">
+
+Panier vide
+
+</div>
+
+
+
+<h3>
+
+Total :
+
+<span id="total">
+
+0
+
+</span>
+
+FCFA
+
+</h3>
+
+
+
+<button onclick="checkout()">
+
+Commander
+
+</button>
+
+
+</section>
+
+
+
+
+
+
+
+
+<!-- PROFIL -->
+
+
+<section id="profile" class="page">
+
+
+<h2>
+
+👤 Mon profil
+
+</h2>
+
+
+<div class="box">
+
+
+Vente CTV
+
+
+<br><br>
+
+
+Mes commandes apparaîtront ici.
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+
+<!-- MENU -->
+
+<nav>
+
+
+<button onclick="openPage('home')">
+
+🏠
+
+<br>
+
+Accueil
+
+</button>
+
+
+
+<button onclick="openPage('categories')">
+
+🛍
+
+<br>
+
+Shop
+
+</button>
+
+
+
+<button onclick="openPage('cart')">
+
+🛒
+
+<br>
+
+Panier
+
+</button>
+
+
+
+<button onclick="openPage('profile')">
+
+👤
+
+<br>
+
+Profil
+
+</button>
+
+
+
+</nav>
+
+
+
+</div>
+
+
+
+
+
+<script src="app.js"></script>
+
+
+</body>
+
+
+</html>
