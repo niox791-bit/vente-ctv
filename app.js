@@ -1,1039 +1,1169 @@
-const tg = window.Telegram?.WebApp;
-
-if (tg) {
-  tg.ready();
-  tg.expand();
-
-  try {
-    tg.setHeaderColor("#070707");
-    tg.setBackgroundColor("#070707");
-  } catch (e) {}
-}
-
-
-/* =========================
-   PRODUITS JNR
-========================= */
+/* =========================================================
+   PRODUITS
+========================================================= */
 
 const products = [
-  {
-    id: 1,
-    name: "JNR Essential",
-    category: "9K",
-    price: 9000,
-    description: "La sélection essentielle JNR."
-  },
-  {
-    id: 2,
-    name: "JNR Classic",
-    category: "9K",
-    price: 9000,
-    description: "Un article simple et efficace."
-  },
-  {
-    id: 3,
-    name: "JNR Premium",
-    category: "15K",
-    price: 15000,
-    description: "Une sélection premium signée JNR."
-  },
-  {
-    id: 4,
-    name: "JNR Urban",
-    category: "15K",
-    price: 15000,
-    description: "Un style moderne et propre."
-  },
-  {
-    id: 5,
-    name: "JNR Black",
-    category: "20K",
-    price: 20000,
-    description: "Une sélection haut de gamme."
-  },
-  {
-    id: 6,
-    name: "JNR Gold",
-    category: "20K",
-    price: 20000,
-    description: "Notre sélection exclusive."
-  }
+
+    {
+        id: 1,
+        name: 'Ballon Doré 2',
+        desc: 'Édition Or',
+        priceNum: 2500,
+        price: '2 500 FCFA',
+        likes: 4,
+        category: 'categories',
+        image: 'https://cdn-icons-png.flaticon.com/512/3198/3198348.png'
+    },
+
+    {
+        id: 2,
+        name: 'Arche de Ballons',
+        desc: 'Kit Anniversaire',
+        priceNum: 15000,
+        price: '15 000 FCFA',
+        likes: 2,
+        category: 'liked',
+        image: 'https://cdn-icons-png.flaticon.com/512/2909/2909761.png'
+    },
+
+    {
+        id: 3,
+        name: 'Guirlande Fête',
+        desc: 'Décoration Luxe',
+        priceNum: 5000,
+        price: '5 000 FCFA',
+        likes: 1,
+        category: 'new',
+        image: 'https://cdn-icons-png.flaticon.com/512/1625/1625052.png'
+    },
+
+    {
+        id: 4,
+        name: 'Pompe Électrique',
+        desc: 'Accessoire',
+        priceNum: 8000,
+        price: '8 000 FCFA',
+        likes: 5,
+        category: 'categories',
+        image: 'https://cdn-icons-png.flaticon.com/512/1147/1147802.png'
+    }
+
 ];
 
 
-let cart = JSON.parse(
-  localStorage.getItem("jnrCart") || "[]"
-);
+/* =========================================================
+   VARIABLES
+========================================================= */
 
-let activeCategory = "Tous";
-let searchQuery = "";
-let selectedProduct = null;
-let modalQuantity = 1;
+let cart = [];
 
 
-/* =========================
-   PRIX FCFA
-========================= */
+/* =========================================================
+   INITIALISATION
+========================================================= */
 
-function formatPrice(price) {
-  return new Intl.NumberFormat("fr-FR").format(price) + " FCFA";
-}
+document.addEventListener('DOMContentLoaded', () => {
 
+    initTelegramSDK();
 
-/* =========================
-   ELEMENTS
-========================= */
+    renderProducts(products);
 
-const productsContainer =
-  document.getElementById("products");
-
-const categoriesContainer =
-  document.getElementById("categories");
-
-const searchInput =
-  document.getElementById("search");
-
-
-/* =========================
-   CATEGORIES
-========================= */
-
-function renderCategories() {
-
-  categoriesContainer.innerHTML = "";
-
-  ["Tous", "9K", "15K", "20K"].forEach(category => {
-
-    const button = document.createElement("button");
-
-    button.className = "category";
-
-    if (category === activeCategory) {
-      button.classList.add("active");
-    }
-
-    button.textContent = category;
-
-    button.onclick = () => {
-
-      activeCategory = category;
-
-      renderCategories();
-      renderProducts();
-
-      haptic();
-
-    };
-
-    categoriesContainer.appendChild(button);
-
-  });
-
-}
-
-
-/* =========================
-   PRODUITS
-========================= */
-
-function renderProducts() {
-
-  const filtered = products.filter(product => {
-
-    const categoryOK =
-      activeCategory === "Tous" ||
-      product.category === activeCategory;
-
-    const searchOK =
-      product.name
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-
-    return categoryOK && searchOK;
-
-  });
-
-
-  productsContainer.innerHTML = "";
-
-
-  if (!filtered.length) {
-
-    productsContainer.innerHTML = `
-      <div class="empty">
-        Aucun article trouvé.
-      </div>
-    `;
-
-    return;
-  }
-
-
-  filtered.forEach((product, index) => {
-
-    const card = document.createElement("article");
-
-    card.className = "product";
-
-    card.style.animationDelay =
-      `${index * 60}ms`;
-
-
-    card.innerHTML = `
-
-      <div class="product-image">
-
-        <div class="product-bottle">
-          JNR
-        </div>
-
-      </div>
-
-
-      <div class="product-info">
-
-        <h3>
-          ${product.name}
-        </h3>
-
-        <p>
-          ${product.category}
-        </p>
-
-
-        <div class="product-bottom">
-
-          <span class="price">
-            ${formatPrice(product.price)}
-          </span>
-
-          <button
-            class="add"
-            onclick="
-              event.stopPropagation();
-              addToCart(${product.id});
-            "
-          >
-            +
-          </button>
-
-        </div>
-
-      </div>
-    `;
-
-
-    card.onclick = () => {
-      openProduct(product.id);
-    };
-
-
-    productsContainer.appendChild(card);
-
-  });
-
-}
-
-
-/* =========================
-   RECHERCHE
-========================= */
-
-searchInput.addEventListener("input", e => {
-
-  searchQuery = e.target.value;
-
-  renderProducts();
+    updateCartUI();
 
 });
 
 
-/* =========================
-   RESET
-========================= */
+/* =========================================================
+   TELEGRAM
+========================================================= */
 
-function resetFilters() {
+function initTelegramSDK() {
 
-  activeCategory = "Tous";
-  searchQuery = "";
+    if (
+        window.Telegram &&
+        window.Telegram.WebApp
+    ) {
 
-  searchInput.value = "";
+        const tg =
+            window.Telegram.WebApp;
 
-  renderCategories();
-  renderProducts();
+        tg.ready();
 
-}
+        tg.expand();
 
+        /*
+         * Utilisation de la couleur Telegram
+         * si disponible.
+         */
 
-/* =========================
-   PANIER
-========================= */
+        try {
 
-function saveCart() {
+            tg.setHeaderColor('#000000');
 
-  localStorage.setItem(
-    "jnrCart",
-    JSON.stringify(cart)
-  );
+            tg.setBackgroundColor('#000000');
 
-  updateCart();
+        } catch (error) {
 
-}
+            console.log(
+                'Configuration Telegram non disponible.'
+            );
 
-
-function updateCart() {
-
-  const count = cart.reduce(
-    (total, item) =>
-      total + item.quantity,
-    0
-  );
+        }
 
 
-  document.getElementById(
-    "cartCount"
-  ).textContent = count;
+        /*
+         * Pré-remplir le nom
+         * de l'utilisateur Telegram.
+         */
+
+        if (
+            tg.initDataUnsafe &&
+            tg.initDataUnsafe.user
+        ) {
+
+            const user =
+                tg.initDataUnsafe.user;
+
+            const nameInput =
+                document.getElementById(
+                    'client-name'
+                );
+
+            if (nameInput) {
+
+                const fullName =
+                    `${user.first_name || ''} ${user.last_name || ''}`
+                    .trim();
+
+                if (fullName) {
+
+                    nameInput.value =
+                        fullName;
+
+                }
+
+            }
+
+        }
 
 
-  renderCart();
-  renderCartPage();
+        /*
+         * Bouton Fermer.
+         */
 
-}
+        const closeButton =
+            document.getElementById(
+                'tg-close-btn'
+            );
 
+        if (closeButton) {
 
-function addToCart(id, quantity = 1) {
+            closeButton.addEventListener(
+                'click',
+                () => {
 
-  const product = products.find(
-    p => p.id === id
-  );
+                    tg.close();
 
-  if (!product) return;
+                }
+            );
 
+        }
 
-  const existing = cart.find(
-    item => item.id === id
-  );
+    } else {
 
+        /*
+         * Si le site est ouvert
+         * directement dans le navigateur,
+         * le bouton Fermer revient à
+         * l'historique précédent.
+         */
 
-  if (existing) {
-    existing.quantity += quantity;
-  } else {
-    cart.push({
-      id: id,
-      quantity: quantity
-    });
-  }
+        const closeButton =
+            document.getElementById(
+                'tg-close-btn'
+            );
 
+        if (closeButton) {
 
-  saveCart();
+            closeButton.addEventListener(
+                'click',
+                () => {
 
-  haptic("medium");
+                    if (
+                        window.history.length > 1
+                    ) {
 
-  showToast(
-    `${product.name} ajouté au panier ✓`
-  );
+                        window.history.back();
 
-}
+                    } else {
 
+                        window.close();
 
-/* =========================
-   QUANTITES
-========================= */
+                    }
 
-function changeQuantity(id, amount) {
+                }
+            );
 
-  const item = cart.find(
-    item => item.id === id
-  );
+        }
 
-  if (!item) return;
-
-
-  item.quantity += amount;
-
-
-  if (item.quantity <= 0) {
-
-    cart = cart.filter(
-      item => item.id !== id
-    );
-
-  }
-
-
-  saveCart();
-
-}
-
-
-function removeFromCart(id) {
-
-  cart = cart.filter(
-    item => item.id !== id
-  );
-
-  saveCart();
-
-}
-
-
-/* =========================
-   TOTAL
-========================= */
-
-function calculateTotal() {
-
-  return cart.reduce(
-    (total, item) => {
-
-      const product = products.find(
-        p => p.id === item.id
-      );
-
-      if (!product) return total;
-
-      return total +
-        product.price * item.quantity;
-
-    },
-    0
-  );
+    }
 
 }
 
 
-/* =========================
-   PANIER RAPIDE
-========================= */
+/* =========================================================
+   NAVIGATION ENTRE LES ONGLETS
+========================================================= */
 
-function openCart() {
+function switchTab(
+    tabName,
+    element
+) {
 
-  renderCart();
+    /*
+     * Cacher toutes les pages.
+     */
 
-  document
-    .getElementById("cart")
-    .classList.add("open");
+    document
+        .querySelectorAll('.view')
+        .forEach(view => {
 
-  document
-    .getElementById("overlay")
-    .classList.add("show");
+            view.classList.remove(
+                'active'
+            );
 
-}
+        });
 
 
-function closeCart() {
+    /*
+     * Afficher la page demandée.
+     */
 
-  document
-    .getElementById("cart")
-    .classList.remove("open");
-
-  document
-    .getElementById("overlay")
-    .classList.remove("show");
-
-}
-
-
-/* =========================
-   RENDU PANIER
-========================= */
-
-function renderCart() {
-
-  const container =
-    document.getElementById("cartItems");
-
-
-  if (!cart.length) {
-
-    container.innerHTML = `
-      <div class="empty">
-        🛒<br><br>
-        Ton panier est vide.
-      </div>
-    `;
-
-  } else {
-
-    container.innerHTML = "";
-
-
-    cart.forEach(item => {
-
-      const product = products.find(
-        p => p.id === item.id
-      );
-
-      if (!product) return;
-
-
-      const element =
-        document.createElement("div");
-
-      element.className = "cart-item";
-
-
-      element.innerHTML = `
-
-        <div class="cart-image">
-          JNR
-        </div>
-
-
-        <div>
-
-          <h4>
-            ${product.name}
-          </h4>
-
-          <p>
-            ${formatPrice(product.price)}
-          </p>
-
-
-          <div class="cart-controls">
-
-            <button
-              onclick="
-                changeQuantity(
-                  ${product.id},
-                  -1
-                )
-              "
-            >
-              −
-            </button>
-
-            <b>
-              ${item.quantity}
-            </b>
-
-            <button
-              onclick="
-                changeQuantity(
-                  ${product.id},
-                  1
-                )
-              "
-            >
-              +
-            </button>
-
-          </div>
-
-        </div>
-
-
-        <button
-          class="remove"
-          onclick="
-            removeFromCart(
-              ${product.id}
-            )
-          "
-        >
-          Suppr.
-        </button>
-
-      `;
-
-
-      container.appendChild(element);
-
-    });
-
-  }
-
-
-  document.getElementById(
-    "cartTotal"
-  ).textContent =
-    formatPrice(calculateTotal());
-
-}
-
-
-/* =========================
-   PAGE PANIER
-========================= */
-
-function showCartPage() {
-
-  closeCart();
-
-  document.getElementById(
-    "home"
-  ).style.display = "none";
-
-
-  document.getElementById(
-    "cartPage"
-  ).classList.add("active");
-
-
-  setActiveNav("navCart");
-
-  renderCartPage();
-
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
-
-}
-
-
-function renderCartPage() {
-
-  const container =
-    document.getElementById(
-      "cartPageItems"
-    );
-
-
-  if (!cart.length) {
-
-    container.innerHTML = `
-      <div class="empty">
-
-        🛒
-
-        <br><br>
-
-        Ton panier est vide.
-
-        <br><br>
-
-        <button
-          class="discover-btn"
-          onclick="goHome()"
-        >
-          Découvrir les articles →
-        </button>
-
-      </div>
-    `;
-
-  } else {
-
-    container.innerHTML = "";
-
-
-    cart.forEach(item => {
-
-      const product =
-        products.find(
-          p => p.id === item.id
+    const targetView =
+        document.getElementById(
+            `view-${tabName}`
         );
 
-      if (!product) return;
+    if (targetView) {
+
+        targetView.classList.add(
+            'active'
+        );
+
+    }
 
 
-      const element =
-        document.createElement("div");
+    /*
+     * Modifier l'onglet actif.
+     */
+
+    document
+        .querySelectorAll('.nav-item')
+        .forEach(item => {
+
+            item.classList.remove(
+                'active'
+            );
+
+        });
 
 
-      element.className =
-        "cart-page-item";
+    if (element) {
+
+        element.classList.add(
+            'active'
+        );
+
+    }
 
 
-      element.innerHTML = `
+    /*
+     * Retour en haut.
+     */
 
-        <div class="cart-page-image">
-          JNR
-        </div>
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
 
-
-        <div class="cart-page-info">
-
-          <h3>
-            ${product.name}
-          </h3>
-
-          <span>
-            ${product.category}
-          </span>
-
-          <strong>
-            ${formatPrice(product.price)}
-          </strong>
+}
 
 
-          <div class="cart-controls">
+/* =========================================================
+   AFFICHAGE DES PRODUITS
+========================================================= */
 
-            <button
-              onclick="
-                changeQuantity(
-                  ${product.id},
-                  -1
-                )
-              "
+function renderProducts(items) {
+
+    const grid =
+        document.getElementById(
+            'products-grid'
+        );
+
+    if (!grid) {
+        return;
+    }
+
+
+    /*
+     * Aucun produit.
+     */
+
+    if (!items || items.length === 0) {
+
+        grid.innerHTML = `
+
+            <div
+                style="
+                    grid-column: 1 / -1;
+                    text-align: center;
+                    color: #8e8e93;
+                    padding: 40px 10px;
+                "
             >
-              −
-            </button>
 
-            <b>
-              ${item.quantity}
-            </b>
+                <i
+                    class="fa-solid fa-box-open"
+                    style="
+                        font-size: 2rem;
+                        color: #ffb700;
+                        margin-bottom: 10px;
+                    "
+                ></i>
 
-            <button
-              onclick="
-                changeQuantity(
-                  ${product.id},
-                  1
-                )
-              "
-            >
-              +
-            </button>
+                <br>
 
-          </div>
+                Aucun produit disponible.
 
-        </div>
+            </div>
 
+        `;
 
-        <button
-          class="remove"
-          onclick="
-            removeFromCart(
-              ${product.id}
-            )
-          "
-        >
-          ×
-        </button>
-
-      `;
+        return;
+    }
 
 
-      container.appendChild(element);
+    grid.innerHTML = items
+        .map(product => {
 
-    });
+            return `
 
-  }
+                <div
+                    class="product-card"
+                    onclick="addToCart(${product.id})"
+                >
 
+                    <div
+                        class="heart-badge"
+                        onclick="toggleLike(event, ${product.id})"
+                    >
 
-  document.getElementById(
-    "pageCartTotal"
-  ).textContent =
-    formatPrice(calculateTotal());
+                        <i
+                            class="fa-solid fa-heart"
+                        ></i>
 
-}
+                        ${
+                            product.likes > 0
+                                ? product.likes
+                                : ''
+                        }
 
-
-/* =========================
-   ACCUEIL
-========================= */
-
-function goHome() {
-
-  document.getElementById(
-    "cartPage"
-  ).classList.remove("active");
-
-
-  document.getElementById(
-    "home"
-  ).style.display = "block";
+                    </div>
 
 
-  setActiveNav("navHome");
+                    <div class="product-img-wrapper">
+
+                        <img
+                            src="${product.image}"
+                            alt="${product.name}"
+                            class="product-img"
+                            loading="lazy"
+                            onerror="this.style.display='none'"
+                        >
+
+                    </div>
 
 
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
-
-}
+                    <div class="product-name">
+                        ${product.name}
+                    </div>
 
 
-/* =========================
-   BOUTIQUE
-========================= */
-
-function scrollToShop() {
-
-  document.getElementById(
-    "cartPage"
-  ).classList.remove("active");
+                    <div class="product-desc">
+                        ${product.desc}
+                    </div>
 
 
-  document.getElementById(
-    "home"
-  ).style.display = "block";
+                    <span class="product-tag">
+                        ${product.price}
+                    </span>
 
+                </div>
 
-  setActiveNav("navShop");
+            `;
 
-
-  setTimeout(() => {
-
-    document.getElementById(
-      "shop"
-    ).scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-
-  }, 50);
+        })
+        .join('');
 
 }
 
 
-/* =========================
-   NAVIGATION
-========================= */
+/* =========================================================
+   FILTRES
+========================================================= */
 
-function setActiveNav(id) {
+function filterProducts(
+    filterType,
+    element
+) {
 
-  document
-    .querySelectorAll(".bottom-nav button")
-    .forEach(button => {
-      button.classList.remove("active");
-    });
+    /*
+     * Bouton actif.
+     */
+
+    document
+        .querySelectorAll('.pill-btn')
+        .forEach(btn => {
+
+            btn.classList.remove(
+                'active'
+            );
+
+        });
 
 
-  document
-    .getElementById(id)
-    ?.classList.add("active");
+    if (element) {
+
+        element.classList.add(
+            'active'
+        );
+
+    }
+
+
+    /*
+     * Toutes les catégories.
+     */
+
+    if (
+        filterType ===
+        'categories'
+    ) {
+
+        renderProducts(
+            products
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Plus aimé.
+     */
+
+    if (
+        filterType ===
+        'liked'
+    ) {
+
+        const filtered =
+            products.filter(
+                product =>
+                    product.likes > 0
+            );
+
+        /*
+         * On trie du plus aimé
+         * au moins aimé.
+         */
+
+        filtered.sort(
+            (a, b) =>
+                b.likes - a.likes
+        );
+
+        renderProducts(
+            filtered
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Nouveautés.
+     */
+
+    if (
+        filterType ===
+        'new'
+    ) {
+
+        const filtered =
+            products.filter(
+                product =>
+                    product.category ===
+                    'new'
+            );
+
+        renderProducts(
+            filtered
+        );
+
+    }
 
 }
 
 
-/* =========================
-   PRODUIT
-========================= */
+/* =========================================================
+   LIKES
+========================================================= */
 
-function openProduct(id) {
+function toggleLike(
+    event,
+    id
+) {
 
-  selectedProduct =
-    products.find(
-      p => p.id === id
+    /*
+     * Empêche le clic de
+     * déclencher addToCart().
+     */
+
+    if (event) {
+
+        event.stopPropagation();
+
+    }
+
+
+    const product =
+        products.find(
+            product =>
+                product.id === id
+        );
+
+    if (!product) {
+        return;
+    }
+
+
+    product.likes++;
+
+
+    /*
+     * Actualiser l'affichage.
+     */
+
+    renderProducts(
+        products
     );
 
-  if (!selectedProduct) return;
+
+    /*
+     * Vibration Telegram.
+     */
+
+    if (
+        window.Telegram &&
+        window.Telegram.WebApp &&
+        window.Telegram.WebApp.HapticFeedback
+    ) {
+
+        window.Telegram.WebApp.HapticFeedback
+            .impactOccurred(
+                'medium'
+            );
+
+    }
+
+}
 
 
-  modalQuantity = 1;
+/* =========================================================
+   AJOUT AU PANIER
+========================================================= */
+
+function addToCart(id) {
+
+    const product =
+        products.find(
+            product =>
+                product.id === id
+        );
+
+    if (!product) {
+        return;
+    }
 
 
-  document.getElementById(
-    "modalCategory"
-  ).textContent =
-    selectedProduct.category;
+    const existingItem =
+        cart.find(
+            item =>
+                item.id === id
+        );
 
 
-  document.getElementById(
-    "modalName"
-  ).textContent =
-    selectedProduct.name;
+    if (existingItem) {
+
+        existingItem.qty++;
+
+    } else {
+
+        cart.push({
+
+            ...product,
+
+            qty: 1
+
+        });
+
+    }
 
 
-  document.getElementById(
-    "modalDescription"
-  ).textContent =
-    selectedProduct.description;
+    updateCartUI();
 
 
-  document.getElementById(
-    "modalPrice"
-  ).textContent =
-    formatPrice(
-      selectedProduct.price
+    /*
+     * Notification Telegram.
+     */
+
+    if (
+        window.Telegram &&
+        window.Telegram.WebApp &&
+        window.Telegram.WebApp.HapticFeedback
+    ) {
+
+        window.Telegram.WebApp.HapticFeedback
+            .notificationOccurred(
+                'success'
+            );
+
+    }
+
+
+    /*
+     * Petit passage automatique
+     * vers le panier.
+     */
+
+    const cartButton =
+        document.querySelector(
+            '.nav-item:nth-child(3)'
+        );
+
+    /*
+     * On ne change pas
+     * automatiquement de page :
+     * le produit reste sur l'accueil.
+     */
+
+}
+
+
+/* =========================================================
+   QUANTITÉS
+========================================================= */
+
+function updateQuantity(
+    id,
+    change
+) {
+
+    const item =
+        cart.find(
+            product =>
+                product.id === id
+        );
+
+    if (!item) {
+        return;
+    }
+
+
+    item.qty += change;
+
+
+    if (item.qty <= 0) {
+
+        cart =
+            cart.filter(
+                product =>
+                    product.id !== id
+            );
+
+    }
+
+
+    updateCartUI();
+
+}
+
+
+/* =========================================================
+   AFFICHAGE DU PANIER
+========================================================= */
+
+function updateCartUI() {
+
+    /*
+     * Nombre total d'articles.
+     */
+
+    const totalCount =
+        cart.reduce(
+            (sum, item) =>
+                sum + item.qty,
+            0
+        );
+
+
+    const cartCount =
+        document.getElementById(
+            'cart-count'
+        );
+
+    if (cartCount) {
+
+        cartCount.textContent =
+            totalCount;
+
+    }
+
+
+    /*
+     * Conteneur du panier.
+     */
+
+    const cartContainer =
+        document.getElementById(
+            'cart-items-container'
+        );
+
+    const summaryBox =
+        document.getElementById(
+            'cart-summary'
+        );
+
+
+    if (
+        !cartContainer ||
+        !summaryBox
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+     * Panier vide.
+     */
+
+    if (cart.length === 0) {
+
+        cartContainer.innerHTML = `
+
+            <div class="empty-cart">
+
+                <i
+                    class="fa-solid fa-basket-shopping fa-2x"
+                ></i>
+
+                <br><br>
+
+                Votre panier est vide.
+
+                <br>
+
+                Ajoutez des produits depuis
+                l'accueil.
+
+            </div>
+
+        `;
+
+        summaryBox.classList.add(
+            'hidden'
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Produits du panier.
+     */
+
+    cartContainer.innerHTML =
+        cart.map(item => {
+
+            return `
+
+                <div class="cart-item">
+
+                    <div class="cart-item-info">
+
+                        <img
+                            src="${item.image}"
+                            class="cart-item-img"
+                            alt="${item.name}"
+                        >
+
+                        <div class="cart-item-details">
+
+                            <h4>
+                                ${item.name}
+                            </h4>
+
+                            <span>
+                                ${item.price}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="qty-controls">
+
+                        <button
+                            class="qty-btn"
+                            onclick="updateQuantity(${item.id}, -1)"
+                            aria-label="Retirer"
+                        >
+                            −
+                        </button>
+
+                        <span class="qty-number">
+                            ${item.qty}
+                        </span>
+
+                        <button
+                            class="qty-btn"
+                            onclick="updateQuantity(${item.id}, 1)"
+                            aria-label="Ajouter"
+                        >
+                            +
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }).join('');
+
+
+    /*
+     * Calculs.
+     */
+
+    const subtotal =
+        cart.reduce(
+            (sum, item) =>
+                sum +
+                (
+                    item.priceNum *
+                    item.qty
+                ),
+            0
+        );
+
+
+    const shipping = 1500;
+
+    const total =
+        subtotal +
+        shipping;
+
+
+    const subtotalElement =
+        document.getElementById(
+            'subtotal-amount'
+        );
+
+    const totalElement =
+        document.getElementById(
+            'total-amount'
+        );
+
+
+    if (subtotalElement) {
+
+        subtotalElement.textContent =
+            `${formatPrice(subtotal)} FCFA`;
+
+    }
+
+
+    if (totalElement) {
+
+        totalElement.textContent =
+            `${formatPrice(total)} FCFA`;
+
+    }
+
+
+    summaryBox.classList.remove(
+        'hidden'
     );
 
-
-  document.getElementById(
-    "modalQty"
-  ).textContent = "1";
+}
 
 
-  document.getElementById(
-    "modalImage"
-  ).innerHTML = `
-    <div class="product-bottle">
-      JNR
-    </div>
-  `;
+/* =========================================================
+   FORMAT PRIX
+========================================================= */
 
+function formatPrice(
+    amount
+) {
 
-  document
-    .getElementById("productModal")
-    .classList.add("show");
+    return Number(amount)
+        .toLocaleString(
+            'fr-FR'
+        );
 
 }
 
 
-function closeProduct() {
-
-  document
-    .getElementById("productModal")
-    .classList.remove("show");
-
-}
-
-
-/* =========================
-   QUANTITE MODAL
-========================= */
-
-function changeModalQty(amount) {
-
-  modalQuantity += amount;
-
-  if (modalQuantity < 1) {
-    modalQuantity = 1;
-  }
-
-
-  document.getElementById(
-    "modalQty"
-  ).textContent =
-    modalQuantity;
-
-}
-
-
-function addModalProduct() {
-
-  if (!selectedProduct) return;
-
-
-  addToCart(
-    selectedProduct.id,
-    modalQuantity
-  );
-
-
-  closeProduct();
-
-}
-
-
-/* =========================
-   COMMANDE
-========================= */
+/* =========================================================
+   CHECKOUT
+========================================================= */
 
 function checkout() {
 
-  if (!cart.length) {
+    if (cart.length === 0) {
 
-    showToast(
-      "Ton panier est vide."
+        alert(
+            'Votre panier est vide.'
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Récupération des informations.
+     */
+
+    const name =
+        document
+            .getElementById(
+                'client-name'
+            )
+            .value
+            .trim();
+
+
+    const phone =
+        document
+            .getElementById(
+                'client-phone'
+            )
+            .value
+            .trim();
+
+
+    const address =
+        document
+            .getElementById(
+                'client-address'
+            )
+            .value
+            .trim();
+
+
+    const notes =
+        document
+            .getElementById(
+                'client-notes'
+            )
+            .value
+            .trim();
+
+
+    /*
+     * Vérification.
+     */
+
+    if (
+        !name ||
+        !phone ||
+        !address
+    ) {
+
+        alert(
+            'Veuillez remplir votre nom, numéro de téléphone et adresse de livraison.'
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Création du message.
+     */
+
+    let message =
+        '📋 NOUVELLE COMMANDE\n\n';
+
+
+    message +=
+        `👤 Nom : ${name}\n`;
+
+    message +=
+        `📞 Téléphone : ${phone}\n`;
+
+    message +=
+        `📍 Adresse : ${address}\n`;
+
+
+    if (notes) {
+
+        message +=
+            `📝 Note : ${notes}\n`;
+
+    }
+
+
+    message +=
+        '\n🛒 ARTICLES :\n';
+
+
+    cart.forEach(item => {
+
+        message +=
+            `• ${item.name} x${item.qty} — ${item.price}\n`;
+
+    });
+
+
+    /*
+     * Calcul du prix.
+     */
+
+    const subtotal =
+        cart.reduce(
+            (sum, item) =>
+                sum +
+                (
+                    item.priceNum *
+                    item.qty
+                ),
+            0
+        );
+
+
+    const shipping = 1500;
+
+    const total =
+        subtotal +
+        shipping;
+
+
+    message +=
+        `\n💰 Sous-total : ${formatPrice(subtotal)} FCFA`;
+
+    message +=
+        `\n🚚 Livraison : ${formatPrice(shipping)} FCFA`;
+
+    message +=
+        `\n✅ TOTAL : ${formatPrice(total)} FCFA`;
+
+
+    /*
+     * Si l'application est ouverte
+     * depuis Telegram, sendData()
+     * permet d'envoyer directement
+     * les données au bot qui a lancé
+     * la Mini App.
+     */
+
+    if (
+        window.Telegram &&
+        window.Telegram.WebApp
+    ) {
+
+        const tg =
+            window.Telegram.WebApp;
+
+
+        try {
+
+            tg.sendData(
+                message
+            );
+
+            /*
+             * Petite confirmation visuelle.
+             */
+
+            alert(
+                'Commande envoyée !'
+            );
+
+            return;
+
+        } catch (error) {
+
+            console.error(
+                'Erreur Telegram sendData:',
+                error
+            );
+
+        }
+
+    }
+
+
+    /*
+     * Fallback si la page est ouverte
+     * hors Telegram.
+     *
+     * Cela ouvre le bot.
+     */
+
+    const encodedMessage =
+        encodeURIComponent(
+            message
+        );
+
+
+    window.open(
+        `https://t.me/vente_puff_bot?text=${encodedMessage}`,
+        '_blank'
     );
 
-    return;
-  }
+}
 
 
-  const order = {
+/* =========================================================
+   UTILITAIRES
+========================================================= */
 
-    shop: "JNR",
+/*
+ * Permet de revenir sur l'accueil
+ * avec le bouton Accueil si nécessaire.
+ */
 
-    products: cart,
+function goHome() {
 
-    total: calculateTotal(),
+    const homeButton =
+        document.querySelector(
+            '.nav-item'
+        );
 
-    telegramUser:
-      tg?.initDataUnsafe?.user || null,
-
-    date:
-      new Date().toISOString()
-
-  };
-
-
-  console.log(
-    "COMMANDE JNR :",
-    order
-  );
-
-
-  try {
-
-    tg?.sendData(
-      JSON.stringify(order)
+    switchTab(
+        'accueil',
+        homeButton
     );
 
-  } catch (e) {
-
-    console.log(e);
-
-  }
-
-
-  showToast(
-    "Commande envoyée ✓"
-  );
-
 }
-
-
-/* =========================
-   TELEGRAM
-========================= */
-
-function haptic(type = "light") {
-
-  try {
-
-    tg?.HapticFeedback
-      ?.impactOccurred(type);
-
-  } catch (e) {}
-
-}
-
-
-/* =========================
-   TOAST
-========================= */
-
-function showToast(message) {
-
-  const toast =
-    document.createElement("div");
-
-
-  toast.textContent = message;
-
-  toast.style.position = "fixed";
-  toast.style.zIndex = "9999";
-  toast.style.left = "50%";
-  toast.style.bottom = "95px";
-  toast.style.transform = "translateX(-50%)";
-
-  toast.style.padding = "13px 19px";
-
-  toast.style.background = "#ffd400";
-  toast.style.color = "#000";
-
-  toast.style.borderRadius = "50px";
-
-  toast.style.fontSize = "11px";
-  toast.style.fontWeight = "900";
-
-  toast.style.boxShadow =
-    "0 10px 35px rgba(0,0,0,.5)";
-
-
-  document.body.appendChild(toast);
-
-
-  setTimeout(() => {
-    toast.remove();
-  }, 1800);
-
-}
-
-
-/* =========================
-   INITIALISATION
-========================= */
-
-renderCategories();
-renderProducts();
-updateCart();
-
-console.log("JNR STORE chargé.");

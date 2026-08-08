@@ -1,393 +1,437 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#080808">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <title>JNR</title>
+    <title>JNR Shop</title>
 
-  <link rel="stylesheet" href="style.css">
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <!-- Telegram WebApp -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="app">
+    <!-- BARRE TELEGRAM -->
+    <div class="tg-top-bar">
+        <button class="tg-btn" id="tg-close-btn">
+            <i class="fa-solid fa-xmark"></i>
+            Fermer
+        </button>
 
-  <!-- HEADER -->
-  <header class="header">
-
-    <div class="brand">
-      <div class="logo">JNR</div>
-
-      <div class="online">
-        <span></span>
-        Boutique officielle
-      </div>
+        <div class="tg-status">
+            <i class="fa-solid fa-check"></i>
+            <i class="fa-solid fa-ellipsis"></i>
+        </div>
     </div>
 
-    <button class="header-cart" onclick="openCart()">
-      <span>🛒</span>
-      <b id="cartCount">0</b>
-    </button>
+    <!-- HEADER -->
+    <header class="main-header">
 
-  </header>
-
-
-  <!-- ACCUEIL -->
-  <main id="home">
-
-    <section class="hero">
-
-      <div class="hero-glow"></div>
-
-      <div class="hero-content">
-
-        <div class="hero-label">
-          JNR STORE
+        <div class="glow-avatar">
+            <i class="fa-solid fa-shop"></i>
         </div>
 
-        <h1>
-          TON STYLE.<br>
-          <span>TON CHOIX.</span>
-        </h1>
+        <h1 class="store-title">JNR Shop</h1>
 
-        <p>
-          Découvre la sélection JNR
-          et commande directement
-          depuis notre boutique.
+        <p class="store-subtitle">
+            Boutique officielle pour commander en ligne
         </p>
 
+    </header>
+
+    <!-- CONTENU PRINCIPAL -->
+    <main class="main-container">
+
+        <!-- ACCUEIL -->
+        <section id="view-accueil" class="view active">
+
+            <div class="pills-container">
+
+                <button
+                    class="pill-btn active"
+                    onclick="filterProducts('categories', this)"
+                >
+                    <i class="fa-solid fa-border-all"></i>
+                    Catégories
+                </button>
+
+                <button
+                    class="pill-btn"
+                    onclick="filterProducts('liked', this)"
+                >
+                    <i class="fa-regular fa-heart"></i>
+                    Plus aimé
+                </button>
+
+                <button
+                    class="pill-btn"
+                    onclick="filterProducts('new', this)"
+                >
+                    <i class="fa-regular fa-clock"></i>
+                    Nouveau
+                </button>
+
+            </div>
+
+            <div
+                class="products-grid"
+                id="products-grid"
+            ></div>
+
+        </section>
+
+        <!-- AVIS -->
+        <section id="view-avis" class="view">
+
+            <h2 class="view-title">
+                <i class="fa-solid fa-star"></i>
+                Avis Clients
+            </h2>
+
+            <div class="reviews-list">
+
+                <div class="review-card">
+
+                    <div class="review-header">
+                        <span class="review-author">
+                            Marc A.
+                        </span>
+
+                        <span class="stars">
+                            ★★★★★
+                        </span>
+                    </div>
+
+                    <p>
+                        "Qualité au top, livraison super rapide !"
+                    </p>
+
+                </div>
+
+                <div class="review-card">
+
+                    <div class="review-header">
+                        <span class="review-author">
+                            Sophie K.
+                        </span>
+
+                        <span class="stars">
+                            ★★★★★
+                        </span>
+                    </div>
+
+                    <p>
+                        "Les produits correspondent exactement aux photos. Je recommande."
+                    </p>
+
+                </div>
+
+                <div class="review-card">
+
+                    <div class="review-header">
+                        <span class="review-author">
+                            Kevin M.
+                        </span>
+
+                        <span class="stars">
+                            ★★★★★
+                        </span>
+                    </div>
+
+                    <p>
+                        "Commande rapide et vendeur très sérieux."
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- PANIER -->
+        <section id="view-panier" class="view">
+
+            <h2 class="view-title">
+                <i class="fa-solid fa-basket-shopping"></i>
+                Votre Panier
+            </h2>
+
+            <div id="cart-items-container"></div>
+
+            <div
+                id="cart-summary"
+                class="cart-summary-box hidden"
+            >
+
+                <div class="summary-line">
+                    <span>Sous-total</span>
+                    <span id="subtotal-amount">
+                        0 FCFA
+                    </span>
+                </div>
+
+                <div class="summary-line">
+                    <span>Livraison</span>
+                    <span>
+                        1 500 FCFA
+                    </span>
+                </div>
+
+                <hr class="summary-divider">
+
+                <div class="summary-line total-line">
+                    <span>Total</span>
+                    <span id="total-amount">
+                        0 FCFA
+                    </span>
+                </div>
+
+                <!-- FORMULAIRE -->
+                <div class="checkout-form">
+
+                    <h3>
+                        <i class="fa-solid fa-truck-fast"></i>
+                        Informations de livraison
+                    </h3>
+
+                    <div class="input-group">
+
+                        <label for="client-name">
+                            Nom complet
+                        </label>
+
+                        <input
+                            type="text"
+                            id="client-name"
+                            placeholder="Ex : Jean Dupont"
+                        >
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <label for="client-phone">
+                            Numéro de téléphone
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="client-phone"
+                            placeholder="Ex : +225 07 00 00 00 00"
+                        >
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <label for="client-address">
+                            Adresse de livraison / Commune
+                        </label>
+
+                        <input
+                            type="text"
+                            id="client-address"
+                            placeholder="Ex : Cocody, Angré"
+                        >
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <label for="client-notes">
+                            Instructions particulières
+                        </label>
+
+                        <textarea
+                            id="client-notes"
+                            rows="3"
+                            placeholder="Ex : Appeler avant d'arriver"
+                        ></textarea>
+
+                    </div>
+
+                    <button
+                        class="btn-checkout"
+                        onclick="checkout()"
+                    >
+                        <i class="fa-brands fa-telegram"></i>
+                        Confirmer la commande
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- INFORMATIONS -->
+        <section id="view-infos" class="view">
+
+            <h2 class="view-title">
+                <i class="fa-solid fa-circle-info"></i>
+                Informations
+            </h2>
+
+            <div class="info-card">
+
+                <h4>
+                    Horaires d'ouverture
+                </h4>
+
+                <p>
+                    Du Lundi au Samedi :
+                    08h00 - 20h00
+                </p>
+
+            </div>
+
+            <div class="info-card">
+
+                <h4>
+                    Zone de livraison
+                </h4>
+
+                <p>
+                    Livraison rapide et expédition selon votre zone.
+                </p>
+
+            </div>
+
+            <div class="info-card">
+
+                <h4>
+                    Commandes
+                </h4>
+
+                <p>
+                    Toutes les commandes sont traitées directement via Telegram.
+                </p>
+
+            </div>
+
+        </section>
+
+        <!-- CONTACT -->
+        <section id="view-contact" class="view">
+
+            <h2 class="view-title">
+                <i class="fa-solid fa-comment"></i>
+                Contactez-nous
+            </h2>
+
+            <div class="contact-card">
+
+                <p>
+                    Pour toute question, commande ou demande personnalisée :
+                </p>
+
+                <a
+                    href="https://t.me/vente_puff_bot"
+                    class="btn-contact-tg"
+                    target="_blank"
+                >
+                    <i class="fa-brands fa-telegram"></i>
+                    Écrire sur Telegram
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <div class="footer-branding">
+
+        <i class="fa-solid fa-bolt"></i>
+
+        Boutique créée avec
+
+        <a
+            href="https://t.me/vente_puff_bot"
+            target="_blank"
+        >
+            @vente_puff_bot
+        </a>
+
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav class="bottom-nav">
+
         <button
-          class="discover-btn"
-          onclick="scrollToShop()"
+            class="nav-item active"
+            onclick="switchTab('accueil', this)"
         >
-          Découvrir les articles
-          <span>→</span>
+            <i class="fa-solid fa-house"></i>
+            <span>Accueil</span>
         </button>
-
-      </div>
-
-      <div class="hero-logo">
-        <span>JNR</span>
-      </div>
-
-    </section>
-
-
-    <!-- BOUTIQUE -->
-    <section
-      class="shop"
-      id="shop"
-    >
-
-      <div class="section-head">
-
-        <div>
-          <small>COLLECTION JNR</small>
-          <h2>Nos articles</h2>
-        </div>
-
-        <button onclick="resetFilters()">
-          Tout voir
-        </button>
-
-      </div>
-
-
-      <!-- RECHERCHE -->
-      <div class="search-box">
-
-        <span>⌕</span>
-
-        <input
-          id="search"
-          type="text"
-          placeholder="Rechercher un article..."
-        >
-
-      </div>
-
-
-      <!-- CATEGORIES -->
-      <div
-        class="categories"
-        id="categories"
-      ></div>
-
-
-      <!-- PRODUITS -->
-      <div
-        class="products"
-        id="products"
-      ></div>
-
-    </section>
-
-
-    <!-- INFORMATIONS -->
-    <section class="features">
-
-      <div class="feature">
-
-        <div class="feature-icon">
-          ⚡
-        </div>
-
-        <div>
-          <strong>Rapide</strong>
-          <span>Commande en quelques clics</span>
-        </div>
-
-      </div>
-
-
-      <div class="feature">
-
-        <div class="feature-icon">
-          ✓
-        </div>
-
-        <div>
-          <strong>Simple</strong>
-          <span>Prix affichés en FCFA</span>
-        </div>
-
-      </div>
-
-
-      <div class="feature">
-
-        <div class="feature-icon">
-          ★
-        </div>
-
-        <div>
-          <strong>JNR</strong>
-          <span>Notre sélection exclusive</span>
-        </div>
-
-      </div>
-
-    </section>
-
-  </main>
-
-
-  <!-- PAGE PANIER -->
-  <section
-    id="cartPage"
-    class="cart-page"
-  >
-
-    <div class="cart-page-top">
-
-      <button onclick="goHome()">
-        ←
-      </button>
-
-      <div>
-        <small>JNR STORE</small>
-        <h2>Mon panier</h2>
-      </div>
-
-    </div>
-
-
-    <div
-      id="cartPageItems"
-      class="cart-page-items"
-    ></div>
-
-
-    <div class="cart-summary">
-
-      <div class="summary-line">
-
-        <span>Total</span>
-
-        <strong id="pageCartTotal">
-          0 FCFA
-        </strong>
-
-      </div>
-
-      <button
-        class="checkout-btn"
-        onclick="checkout()"
-      >
-        Commander
-        <span>→</span>
-      </button>
-
-    </div>
-
-  </section>
-
-
-  <!-- PANIER LATÉRAL -->
-  <div
-    id="overlay"
-    class="overlay"
-    onclick="closeCart()"
-  ></div>
-
-
-  <aside
-    id="cart"
-    class="cart"
-  >
-
-    <div class="cart-top">
-
-      <div>
-        <small>JNR STORE</small>
-        <h2>Panier</h2>
-      </div>
-
-      <button onclick="closeCart()">
-        ×
-      </button>
-
-    </div>
-
-
-    <div
-      id="cartItems"
-      class="cart-items"
-    ></div>
-
-
-    <div class="cart-bottom">
-
-      <div class="summary-line">
-
-        <span>Total</span>
-
-        <strong id="cartTotal">
-          0 FCFA
-        </strong>
-
-      </div>
-
-      <button
-        class="checkout-btn"
-        onclick="showCartPage()"
-      >
-        Voir mon panier
-        <span>→</span>
-      </button>
-
-    </div>
-
-  </aside>
-
-
-  <!-- MODAL PRODUIT -->
-  <div
-    id="productModal"
-    class="modal"
-  >
-
-    <div class="modal-box">
-
-      <button
-        class="modal-close"
-        onclick="closeProduct()"
-      >
-        ×
-      </button>
-
-      <div
-        id="modalImage"
-        class="modal-image"
-      ></div>
-
-      <div class="modal-content">
-
-        <small id="modalCategory"></small>
-
-        <h2 id="modalName"></h2>
-
-        <p id="modalDescription"></p>
-
-        <strong
-          id="modalPrice"
-          class="modal-price"
-        ></strong>
-
-
-        <div class="quantity-row">
-
-          <span>Quantité</span>
-
-          <div class="quantity">
-
-            <button onclick="changeModalQty(-1)">
-              −
-            </button>
-
-            <b id="modalQty">1</b>
-
-            <button onclick="changeModalQty(1)">
-              +
-            </button>
-
-          </div>
-
-        </div>
-
 
         <button
-          class="checkout-btn"
-          onclick="addModalProduct()"
+            class="nav-item"
+            onclick="switchTab('avis', this)"
         >
-          Ajouter au panier
-          <span>+</span>
+            <i class="fa-solid fa-star"></i>
+            <span>Avis</span>
         </button>
 
-      </div>
+        <button
+            class="nav-item"
+            onclick="switchTab('panier', this)"
+        >
 
-    </div>
+            <div class="icon-wrapper">
 
-  </div>
+                <i class="fa-solid fa-basket-shopping"></i>
 
+                <span
+                    class="badge"
+                    id="cart-count"
+                >
+                    0
+                </span>
 
-  <!-- NAVIGATION -->
-  <nav class="bottom-nav">
+            </div>
 
-    <button
-      id="navHome"
-      class="active"
-      onclick="goHome()"
-    >
-      <span>⌂</span>
-      Accueil
-    </button>
+            <span>Panier</span>
 
-    <button
-      id="navShop"
-      onclick="scrollToShop()"
-    >
-      <span>◉</span>
-      Boutique
-    </button>
+        </button>
 
-    <button
-      id="navCart"
-      onclick="showCartPage()"
-    >
-      <span>🛒</span>
-      Panier
-    </button>
+        <button
+            class="nav-item"
+            onclick="switchTab('infos', this)"
+        >
+            <i class="fa-solid fa-circle-info"></i>
+            <span>Infos</span>
+        </button>
 
-  </nav>
+        <button
+            class="nav-item"
+            onclick="switchTab('contact', this)"
+        >
+            <i class="fa-solid fa-comment"></i>
+            <span>Contact</span>
+        </button>
 
-</div>
+    </nav>
 
-
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="app.js"></script>
+    <!-- JAVASCRIPT -->
+    <script src="app.js"></script>
 
 </body>
 </html>
