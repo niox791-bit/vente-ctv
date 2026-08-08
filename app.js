@@ -1,68 +1,70 @@
-/* =========================================================
-   PRODUITS
-========================================================= */
+// =========================================================
+// JNR SHOP - APPLICATION
+// =========================================================
+
+// ---------------------------------------------------------
+// PRODUITS
+// ---------------------------------------------------------
 
 const products = [
-
     {
         id: 1,
-        name: 'Ballon Doré 2',
-        desc: 'Édition Or',
+        name: "JNR Falcon X",
+        desc: "Puff JNR",
         priceNum: 2500,
-        price: '2 500 FCFA',
-        likes: 4,
-        category: 'categories',
-        image: 'https://cdn-icons-png.flaticon.com/512/3198/3198348.png'
+        price: "2 500 FCFA",
+        likes: 12,
+        category: "categories",
+        image: "https://www.ecigplanete.com/32645-large_default/puff-falcon-x-28000-jnr.jpg"
     },
 
     {
         id: 2,
-        name: 'Arche de Ballons',
-        desc: 'Kit Anniversaire',
+        name: "JNR Falcon X 28000",
+        desc: "Grande autonomie",
         priceNum: 15000,
-        price: '15 000 FCFA',
-        likes: 2,
-        category: 'liked',
-        image: 'https://cdn-icons-png.flaticon.com/512/2909/2909761.png'
+        price: "15 000 FCFA",
+        likes: 25,
+        category: "liked",
+        image: "https://www.ecigplanete.com/32645-large_default/puff-falcon-x-28000-jnr.jpg"
     },
 
     {
         id: 3,
-        name: 'Guirlande Fête',
-        desc: 'Décoration Luxe',
+        name: "JNR Vapor",
+        desc: "Nouveau modèle",
         priceNum: 5000,
-        price: '5 000 FCFA',
-        likes: 1,
-        category: 'new',
-        image: 'https://cdn-icons-png.flaticon.com/512/1625/1625052.png'
+        price: "5 000 FCFA",
+        likes: 8,
+        category: "new",
+        image: "https://www.ecigplanete.com/32645-large_default/puff-falcon-x-28000-jnr.jpg"
     },
 
     {
         id: 4,
-        name: 'Pompe Électrique',
-        desc: 'Accessoire',
+        name: "JNR Collection",
+        desc: "Collection JNR",
         priceNum: 8000,
-        price: '8 000 FCFA',
-        likes: 5,
-        category: 'categories',
-        image: 'https://cdn-icons-png.flaticon.com/512/1147/1147802.png'
+        price: "8 000 FCFA",
+        likes: 18,
+        category: "categories",
+        image: "https://www.ecigplanete.com/32645-large_default/puff-falcon-x-28000-jnr.jpg"
     }
-
 ];
 
 
-/* =========================================================
-   VARIABLES
-========================================================= */
+// ---------------------------------------------------------
+// PANIER
+// ---------------------------------------------------------
 
 let cart = [];
 
 
-/* =========================================================
-   INITIALISATION
-========================================================= */
+// ---------------------------------------------------------
+// INITIALISATION
+// ---------------------------------------------------------
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
 
     initTelegramSDK();
 
@@ -70,12 +72,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateCartUI();
 
+    setupNavigation();
+
 });
 
 
-/* =========================================================
-   TELEGRAM
-========================================================= */
+// ---------------------------------------------------------
+// TELEGRAM
+// ---------------------------------------------------------
 
 function initTelegramSDK() {
 
@@ -84,82 +88,40 @@ function initTelegramSDK() {
         window.Telegram.WebApp
     ) {
 
-        const tg =
-            window.Telegram.WebApp;
+        const tg = window.Telegram.WebApp;
 
         tg.ready();
 
         tg.expand();
 
-        /*
-         * Utilisation de la couleur Telegram
-         * si disponible.
-         */
-
-        try {
-
-            tg.setHeaderColor('#000000');
-
-            tg.setBackgroundColor('#000000');
-
-        } catch (error) {
-
-            console.log(
-                'Configuration Telegram non disponible.'
-            );
-
-        }
-
-
-        /*
-         * Pré-remplir le nom
-         * de l'utilisateur Telegram.
-         */
-
+        // Nom Telegram
         if (
             tg.initDataUnsafe &&
             tg.initDataUnsafe.user
         ) {
 
-            const user =
-                tg.initDataUnsafe.user;
+            const user = tg.initDataUnsafe.user;
 
             const nameInput =
-                document.getElementById(
-                    'client-name'
-                );
+                document.getElementById("client-name");
 
             if (nameInput) {
 
-                const fullName =
-                    `${user.first_name || ''} ${user.last_name || ''}`
-                    .trim();
-
-                if (fullName) {
-
-                    nameInput.value =
-                        fullName;
-
-                }
+                nameInput.value =
+                    `${user.first_name || ""} ${user.last_name || ""}`.trim();
 
             }
 
         }
 
-
-        /*
-         * Bouton Fermer.
-         */
-
+        // Bouton fermer
         const closeButton =
-            document.getElementById(
-                'tg-close-btn'
-            );
+            document.getElementById("tg-close-btn");
 
         if (closeButton) {
 
             closeButton.addEventListener(
-                'click',
+                "click",
                 () => {
 
                     tg.close();
@@ -171,35 +133,17 @@ function initTelegramSDK() {
 
     } else {
 
-        /*
-         * Si le site est ouvert
-         * directement dans le navigateur,
-         * le bouton Fermer revient à
-         * l'historique précédent.
-         */
-
+        // Le bouton doit quand même fonctionner
         const closeButton =
-            document.getElementById(
-                'tg-close-btn'
-            );
+            document.getElementById("tg-close-btn");
 
         if (closeButton) {
 
             closeButton.addEventListener(
-                'click',
+                "click",
                 () => {
 
-                    if (
-                        window.history.length > 1
-                    ) {
-
-                        window.history.back();
-
-                    } else {
-
-                        window.close();
-
-                    }
+                    window.history.back();
 
                 }
             );
@@ -211,326 +155,240 @@ function initTelegramSDK() {
 }
 
 
-/* =========================================================
-   NAVIGATION ENTRE LES ONGLETS
-========================================================= */
+// ---------------------------------------------------------
+// NAVIGATION
+// ---------------------------------------------------------
 
-function switchTab(
-    tabName,
-    element
-) {
-
-    /*
-     * Cacher toutes les pages.
-     */
+function setupNavigation() {
 
     document
-        .querySelectorAll('.view')
-        .forEach(view => {
+        .querySelectorAll(".nav-item")
+        .forEach(button => {
 
-            view.classList.remove(
-                'active'
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const onclick =
+                        button.getAttribute("onclick");
+
+                    if (!onclick) return;
+
+                }
             );
 
         });
 
+}
 
-    /*
-     * Afficher la page demandée.
-     */
 
+function switchTab(tabName, element) {
+
+    // Cacher toutes les pages
+    document
+        .querySelectorAll(".view")
+        .forEach(view => {
+
+            view.classList.remove("active");
+
+        });
+
+
+    // Trouver la page demandée
     const targetView =
         document.getElementById(
             `view-${tabName}`
         );
 
+
     if (targetView) {
 
-        targetView.classList.add(
-            'active'
-        );
+        targetView.classList.add("active");
 
     }
 
 
-    /*
-     * Modifier l'onglet actif.
-     */
-
+    // Modifier le bouton actif
     document
-        .querySelectorAll('.nav-item')
+        .querySelectorAll(".nav-item")
         .forEach(item => {
 
-            item.classList.remove(
-                'active'
-            );
+            item.classList.remove("active");
 
         });
 
 
     if (element) {
 
-        element.classList.add(
-            'active'
-        );
+        element.classList.add("active");
 
     }
 
 
-    /*
-     * Retour en haut.
-     */
-
+    // Remonter en haut
     window.scrollTo({
         top: 0,
-        behavior: 'smooth'
+        behavior: "smooth"
     });
 
-}
 
-
-/* =========================================================
-   AFFICHAGE DES PRODUITS
-========================================================= */
-
-function renderProducts(items) {
-
-    const grid =
-        document.getElementById(
-            'products-grid'
-        );
-
-    if (!grid) {
-        return;
-    }
-
-
-    /*
-     * Aucun produit.
-     */
-
-    if (!items || items.length === 0) {
-
-        grid.innerHTML = `
-
-            <div
-                style="
-                    grid-column: 1 / -1;
-                    text-align: center;
-                    color: #8e8e93;
-                    padding: 40px 10px;
-                "
-            >
-
-                <i
-                    class="fa-solid fa-box-open"
-                    style="
-                        font-size: 2rem;
-                        color: #ffb700;
-                        margin-bottom: 10px;
-                    "
-                ></i>
-
-                <br>
-
-                Aucun produit disponible.
-
-            </div>
-
-        `;
-
-        return;
-    }
-
-
-    grid.innerHTML = items
-        .map(product => {
-
-            return `
-
-                <div
-                    class="product-card"
-                    onclick="addToCart(${product.id})"
-                >
-
-                    <div
-                        class="heart-badge"
-                        onclick="toggleLike(event, ${product.id})"
-                    >
-
-                        <i
-                            class="fa-solid fa-heart"
-                        ></i>
-
-                        ${
-                            product.likes > 0
-                                ? product.likes
-                                : ''
-                        }
-
-                    </div>
-
-
-                    <div class="product-img-wrapper">
-
-                        <img
-                            src="${product.image}"
-                            alt="${product.name}"
-                            class="product-img"
-                            loading="lazy"
-                            onerror="this.style.display='none'"
-                        >
-
-                    </div>
-
-
-                    <div class="product-name">
-                        ${product.name}
-                    </div>
-
-
-                    <div class="product-desc">
-                        ${product.desc}
-                    </div>
-
-
-                    <span class="product-tag">
-                        ${product.price}
-                    </span>
-
-                </div>
-
-            `;
-
-        })
-        .join('');
+    haptic("light");
 
 }
 
 
-/* =========================================================
-   FILTRES
-========================================================= */
+// ---------------------------------------------------------
+// FILTRES PRODUITS
+// ---------------------------------------------------------
 
 function filterProducts(
     filterType,
     element
 ) {
 
-    /*
-     * Bouton actif.
-     */
-
     document
-        .querySelectorAll('.pill-btn')
-        .forEach(btn => {
+        .querySelectorAll(".pill-btn")
+        .forEach(button => {
 
-            btn.classList.remove(
-                'active'
-            );
+            button.classList.remove("active");
 
         });
 
 
     if (element) {
 
-        element.classList.add(
-            'active'
-        );
+        element.classList.add("active");
 
     }
 
 
-    /*
-     * Toutes les catégories.
-     */
+    let filteredProducts;
 
-    if (
-        filterType ===
-        'categories'
-    ) {
 
-        renderProducts(
-            products
-        );
+    if (filterType === "categories") {
 
-        return;
+        filteredProducts = products;
 
     }
 
+    else if (filterType === "liked") {
 
-    /*
-     * Plus aimé.
-     */
-
-    if (
-        filterType ===
-        'liked'
-    ) {
-
-        const filtered =
+        filteredProducts =
             products.filter(
-                product =>
-                    product.likes > 0
+                product => product.likes > 0
             );
 
-        /*
-         * On trie du plus aimé
-         * au moins aimé.
-         */
-
-        filtered.sort(
-            (a, b) =>
-                b.likes - a.likes
-        );
-
-        renderProducts(
-            filtered
-        );
-
-        return;
-
     }
 
+    else if (filterType === "new") {
 
-    /*
-     * Nouveautés.
-     */
-
-    if (
-        filterType ===
-        'new'
-    ) {
-
-        const filtered =
+        filteredProducts =
             products.filter(
-                product =>
-                    product.category ===
-                    'new'
+                product => product.category === "new"
             );
 
-        renderProducts(
-            filtered
-        );
+    }
+
+    else {
+
+        filteredProducts = products;
 
     }
+
+
+    renderProducts(filteredProducts);
+
+    haptic("light");
 
 }
 
 
-/* =========================================================
-   LIKES
-========================================================= */
+// ---------------------------------------------------------
+// AFFICHAGE PRODUITS
+// ---------------------------------------------------------
 
-function toggleLike(
-    event,
-    id
-) {
+function renderProducts(items) {
 
-    /*
-     * Empêche le clic de
-     * déclencher addToCart().
-     */
+    const grid =
+        document.getElementById("products-grid");
+
+
+    if (!grid) return;
+
+
+    if (!items || items.length === 0) {
+
+        grid.innerHTML = `
+            <div class="empty-cart">
+                Aucun produit disponible.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    grid.innerHTML =
+        items.map(product => `
+
+            <div
+                class="product-card"
+                onclick="addToCart(${product.id})"
+            >
+
+                <div
+                    class="heart-badge"
+                    onclick="toggleLike(event, ${product.id})"
+                >
+
+                    <i class="fa-solid fa-heart"></i>
+
+                    <span>
+                        ${product.likes}
+                    </span>
+
+                </div>
+
+
+                <div class="product-img-wrapper">
+
+                    <img
+                        src="${product.image}"
+                        alt="${escapeHTML(product.name)}"
+                        class="product-img"
+                        onerror="this.style.display='none'"
+                    >
+
+                </div>
+
+
+                <div class="product-name">
+                    ${escapeHTML(product.name)}
+                </div>
+
+
+                <div class="product-desc">
+                    ${escapeHTML(product.desc)}
+                </div>
+
+
+                <span class="product-tag">
+                    ${product.price}
+                </span>
+
+            </div>
+
+        `).join("");
+
+}
+
+
+// ---------------------------------------------------------
+// LIKE
+// ---------------------------------------------------------
+
+function toggleLike(event, id) {
 
     if (event) {
 
@@ -541,68 +399,42 @@ function toggleLike(
 
     const product =
         products.find(
-            product =>
-                product.id === id
+            item => item.id === id
         );
 
-    if (!product) {
-        return;
-    }
+
+    if (!product) return;
 
 
     product.likes++;
 
 
-    /*
-     * Actualiser l'affichage.
-     */
-
-    renderProducts(
-        products
-    );
+    renderProducts(products);
 
 
-    /*
-     * Vibration Telegram.
-     */
-
-    if (
-        window.Telegram &&
-        window.Telegram.WebApp &&
-        window.Telegram.WebApp.HapticFeedback
-    ) {
-
-        window.Telegram.WebApp.HapticFeedback
-            .impactOccurred(
-                'medium'
-            );
-
-    }
+    haptic("medium");
 
 }
 
 
-/* =========================================================
-   AJOUT AU PANIER
-========================================================= */
+// ---------------------------------------------------------
+// AJOUT PANIER
+// ---------------------------------------------------------
 
 function addToCart(id) {
 
     const product =
         products.find(
-            product =>
-                product.id === id
+            item => item.id === id
         );
 
-    if (!product) {
-        return;
-    }
+
+    if (!product) return;
 
 
     const existingItem =
         cart.find(
-            item =>
-                item.id === id
+            item => item.id === id
         );
 
 
@@ -610,14 +442,13 @@ function addToCart(id) {
 
         existingItem.qty++;
 
-    } else {
+    }
+
+    else {
 
         cart.push({
-
             ...product,
-
             qty: 1
-
         });
 
     }
@@ -626,46 +457,20 @@ function addToCart(id) {
     updateCartUI();
 
 
-    /*
-     * Notification Telegram.
-     */
-
-    if (
-        window.Telegram &&
-        window.Telegram.WebApp &&
-        window.Telegram.WebApp.HapticFeedback
-    ) {
-
-        window.Telegram.WebApp.HapticFeedback
-            .notificationOccurred(
-                'success'
-            );
-
-    }
+    animateCartBadge();
 
 
-    /*
-     * Petit passage automatique
-     * vers le panier.
-     */
+    playAddSound();
 
-    const cartButton =
-        document.querySelector(
-            '.nav-item:nth-child(3)'
-        );
 
-    /*
-     * On ne change pas
-     * automatiquement de page :
-     * le produit reste sur l'accueil.
-     */
+    haptic("success");
 
 }
 
 
-/* =========================================================
-   QUANTITÉS
-========================================================= */
+// ---------------------------------------------------------
+// QUANTITÉ
+// ---------------------------------------------------------
 
 function updateQuantity(
     id,
@@ -674,13 +479,11 @@ function updateQuantity(
 
     const item =
         cart.find(
-            product =>
-                product.id === id
+            product => product.id === id
         );
 
-    if (!item) {
-        return;
-    }
+
+    if (!item) return;
 
 
     item.qty += change;
@@ -690,8 +493,7 @@ function updateQuantity(
 
         cart =
             cart.filter(
-                product =>
-                    product.id !== id
+                product => product.id !== id
             );
 
     }
@@ -699,20 +501,19 @@ function updateQuantity(
 
     updateCartUI();
 
+
+    haptic("light");
+
 }
 
 
-/* =========================================================
-   AFFICHAGE DU PANIER
-========================================================= */
+// ---------------------------------------------------------
+// INTERFACE PANIER
+// ---------------------------------------------------------
 
 function updateCartUI() {
 
-    /*
-     * Nombre total d'articles.
-     */
-
-    const totalCount =
+    const count =
         cart.reduce(
             (sum, item) =>
                 sum + item.qty,
@@ -721,156 +522,122 @@ function updateCartUI() {
 
 
     const cartCount =
-        document.getElementById(
-            'cart-count'
-        );
+        document.getElementById("cart-count");
+
 
     if (cartCount) {
 
-        cartCount.textContent =
-            totalCount;
+        cartCount.textContent = count;
 
     }
 
 
-    /*
-     * Conteneur du panier.
-     */
-
-    const cartContainer =
+    const container =
         document.getElementById(
-            'cart-items-container'
-        );
-
-    const summaryBox =
-        document.getElementById(
-            'cart-summary'
+            "cart-items-container"
         );
 
 
-    if (
-        !cartContainer ||
-        !summaryBox
-    ) {
-
-        return;
-
-    }
+    const summary =
+        document.getElementById(
+            "cart-summary"
+        );
 
 
-    /*
-     * Panier vide.
-     */
+    if (!container || !summary) return;
 
+
+    // Panier vide
     if (cart.length === 0) {
 
-        cartContainer.innerHTML = `
+        container.innerHTML = `
 
             <div class="empty-cart">
 
-                <i
-                    class="fa-solid fa-basket-shopping fa-2x"
-                ></i>
+                <i class="
+                    fa-solid
+                    fa-basket-shopping
+                    fa-2x
+                "></i>
 
                 <br><br>
 
                 Votre panier est vide.
 
-                <br>
-
-                Ajoutez des produits depuis
-                l'accueil.
-
             </div>
 
         `;
 
-        summaryBox.classList.add(
-            'hidden'
-        );
+        summary.classList.add("hidden");
 
         return;
 
     }
 
 
-    /*
-     * Produits du panier.
-     */
+    // Articles
+    container.innerHTML =
+        cart.map(item => `
 
-    cartContainer.innerHTML =
-        cart.map(item => {
+            <div class="cart-item">
 
-            return `
+                <div class="cart-item-info">
 
-                <div class="cart-item">
+                    <img
+                        src="${item.image}"
+                        class="cart-item-img"
+                        alt="${escapeHTML(item.name)}"
+                    >
 
-                    <div class="cart-item-info">
+                    <div class="cart-item-details">
 
-                        <img
-                            src="${item.image}"
-                            class="cart-item-img"
-                            alt="${item.name}"
-                        >
+                        <h4>
+                            ${escapeHTML(item.name)}
+                        </h4>
 
-                        <div class="cart-item-details">
-
-                            <h4>
-                                ${item.name}
-                            </h4>
-
-                            <span>
-                                ${item.price}
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="qty-controls">
-
-                        <button
-                            class="qty-btn"
-                            onclick="updateQuantity(${item.id}, -1)"
-                            aria-label="Retirer"
-                        >
-                            −
-                        </button>
-
-                        <span class="qty-number">
-                            ${item.qty}
+                        <span>
+                            ${item.price}
                         </span>
-
-                        <button
-                            class="qty-btn"
-                            onclick="updateQuantity(${item.id}, 1)"
-                            aria-label="Ajouter"
-                        >
-                            +
-                        </button>
 
                     </div>
 
                 </div>
 
-            `;
 
-        }).join('');
+                <div class="qty-controls">
+
+                    <button
+                        class="qty-btn"
+                        onclick="updateQuantity(${item.id}, -1)"
+                    >
+                        −
+                    </button>
+
+                    <span>
+                        ${item.qty}
+                    </span>
+
+                    <button
+                        class="qty-btn"
+                        onclick="updateQuantity(${item.id}, 1)"
+                    >
+                        +
+                    </button>
+
+                </div>
+
+            </div>
+
+        `).join("");
 
 
-    /*
-     * Calculs.
-     */
-
+    // Calculs
     const subtotal =
         cart.reduce(
             (sum, item) =>
                 sum +
-                (
-                    item.priceNum *
-                    item.qty
-                ),
+                item.priceNum *
+                item.qty,
             0
         );
 
@@ -878,18 +645,18 @@ function updateCartUI() {
     const shipping = 1500;
 
     const total =
-        subtotal +
-        shipping;
+        subtotal + shipping;
 
 
     const subtotalElement =
         document.getElementById(
-            'subtotal-amount'
+            "subtotal-amount"
         );
+
 
     const totalElement =
         document.getElementById(
-            'total-amount'
+            "total-amount"
         );
 
 
@@ -909,89 +676,38 @@ function updateCartUI() {
     }
 
 
-    summaryBox.classList.remove(
-        'hidden'
-    );
+    summary.classList.remove("hidden");
 
 }
 
 
-/* =========================================================
-   FORMAT PRIX
-========================================================= */
-
-function formatPrice(
-    amount
-) {
-
-    return Number(amount)
-        .toLocaleString(
-            'fr-FR'
-        );
-
-}
-
-
-/* =========================================================
-   CHECKOUT
-========================================================= */
+// ---------------------------------------------------------
+// CHECKOUT
+// ---------------------------------------------------------
 
 function checkout() {
 
     if (cart.length === 0) {
 
-        alert(
-            'Votre panier est vide.'
-        );
+        alert("Votre panier est vide.");
 
         return;
 
     }
 
 
-    /*
-     * Récupération des informations.
-     */
-
     const name =
-        document
-            .getElementById(
-                'client-name'
-            )
-            .value
-            .trim();
-
+        getValue("client-name");
 
     const phone =
-        document
-            .getElementById(
-                'client-phone'
-            )
-            .value
-            .trim();
-
+        getValue("client-phone");
 
     const address =
-        document
-            .getElementById(
-                'client-address'
-            )
-            .value
-            .trim();
-
+        getValue("client-address");
 
     const notes =
-        document
-            .getElementById(
-                'client-notes'
-            )
-            .value
-            .trim();
+        getValue("client-notes");
 
-
-    /*
-     * Vérification.
-     */
 
     if (
         !name ||
@@ -1000,7 +716,7 @@ function checkout() {
     ) {
 
         alert(
-            'Veuillez remplir votre nom, numéro de téléphone et adresse de livraison.'
+            "Veuillez remplir votre nom, votre numéro de téléphone et votre adresse."
         );
 
         return;
@@ -1008,12 +724,8 @@ function checkout() {
     }
 
 
-    /*
-     * Création du message.
-     */
-
     let message =
-        '📋 NOUVELLE COMMANDE\n\n';
+        "📋 NOUVELLE COMMANDE\n\n";
 
 
     message +=
@@ -1035,7 +747,7 @@ function checkout() {
 
 
     message +=
-        '\n🛒 ARTICLES :\n';
+        "\n🛒 ARTICLES :\n";
 
 
     cart.forEach(item => {
@@ -1046,18 +758,12 @@ function checkout() {
     });
 
 
-    /*
-     * Calcul du prix.
-     */
-
     const subtotal =
         cart.reduce(
             (sum, item) =>
                 sum +
-                (
-                    item.priceNum *
-                    item.qty
-                ),
+                item.priceNum *
+                item.qty,
             0
         );
 
@@ -1065,8 +771,7 @@ function checkout() {
     const shipping = 1500;
 
     const total =
-        subtotal +
-        shipping;
+        subtotal + shipping;
 
 
     message +=
@@ -1076,46 +781,35 @@ function checkout() {
         `\n🚚 Livraison : ${formatPrice(shipping)} FCFA`;
 
     message +=
-        `\n✅ TOTAL : ${formatPrice(total)} FCFA`;
+        `\n✅ Total : ${formatPrice(total)} FCFA`;
 
 
-    /*
-     * Si l'application est ouverte
-     * depuis Telegram, sendData()
-     * permet d'envoyer directement
-     * les données au bot qui a lancé
-     * la Mini App.
-     */
+    const encodedMessage =
+        encodeURIComponent(message);
 
+
+    const telegramURL =
+        `https://t.me/vente_puff_bot?text=${encodedMessage}`;
+
+
+    // Telegram WebApp
     if (
         window.Telegram &&
         window.Telegram.WebApp
     ) {
 
-        const tg =
-            window.Telegram.WebApp;
-
-
         try {
 
-            tg.sendData(
-                message
-            );
-
-            /*
-             * Petite confirmation visuelle.
-             */
-
-            alert(
-                'Commande envoyée !'
+            window.Telegram.WebApp.openTelegramLink(
+                telegramURL
             );
 
             return;
 
         } catch (error) {
 
-            console.error(
-                'Erreur Telegram sendData:',
+            console.log(
+                "openTelegramLink fallback",
                 error
             );
 
@@ -1124,46 +818,199 @@ function checkout() {
     }
 
 
-    /*
-     * Fallback si la page est ouverte
-     * hors Telegram.
-     *
-     * Cela ouvre le bot.
-     */
-
-    const encodedMessage =
-        encodeURIComponent(
-            message
-        );
-
-
+    // Navigateur normal
     window.open(
-        `https://t.me/vente_puff_bot?text=${encodedMessage}`,
-        '_blank'
+        telegramURL,
+        "_blank"
     );
 
 }
 
 
-/* =========================================================
-   UTILITAIRES
-========================================================= */
+// ---------------------------------------------------------
+// ANIMATION PANIER
+// ---------------------------------------------------------
 
-/*
- * Permet de revenir sur l'accueil
- * avec le bouton Accueil si nécessaire.
- */
+function animateCartBadge() {
 
-function goHome() {
-
-    const homeButton =
-        document.querySelector(
-            '.nav-item'
+    const badge =
+        document.getElementById(
+            "cart-count"
         );
 
-    switchTab(
-        'accueil',
-        homeButton
+
+    if (!badge) return;
+
+
+    badge.classList.remove("bump");
+
+
+    void badge.offsetWidth;
+
+
+    badge.classList.add("bump");
+
+}
+
+
+// ---------------------------------------------------------
+// SON AJOUT PANIER
+// ---------------------------------------------------------
+
+function playAddSound() {
+
+    try {
+
+        const AudioContext =
+            window.AudioContext ||
+            window.webkitAudioContext;
+
+
+        if (!AudioContext) return;
+
+
+        const audioContext =
+            new AudioContext();
+
+
+        const oscillator =
+            audioContext.createOscillator();
+
+
+        const gain =
+            audioContext.createGain();
+
+
+        oscillator.type = "sine";
+
+        oscillator.frequency.setValueAtTime(
+            520,
+            audioContext.currentTime
+        );
+
+        oscillator.frequency.exponentialRampToValueAtTime(
+            780,
+            audioContext.currentTime + 0.08
+        );
+
+
+        gain.gain.setValueAtTime(
+            0.0001,
+            audioContext.currentTime
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            0.08,
+            audioContext.currentTime + 0.01
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            0.0001,
+            audioContext.currentTime + 0.12
+        );
+
+
+        oscillator.connect(gain);
+
+        gain.connect(
+            audioContext.destination
+        );
+
+
+        oscillator.start();
+
+        oscillator.stop(
+            audioContext.currentTime + 0.13
+        );
+
+    } catch (error) {
+
+        console.log(
+            "Audio non disponible",
+            error
+        );
+
+    }
+
+}
+
+
+// ---------------------------------------------------------
+// HAPTIC TELEGRAM
+// ---------------------------------------------------------
+
+function haptic(type) {
+
+    if (
+        window.Telegram &&
+        window.Telegram.WebApp &&
+        window.Telegram.WebApp.HapticFeedback
+    ) {
+
+        const hapticAPI =
+            window.Telegram.WebApp.HapticFeedback;
+
+
+        if (
+            type === "success" &&
+            hapticAPI.notificationOccurred
+        ) {
+
+            hapticAPI.notificationOccurred(
+                "success"
+            );
+
+        }
+
+        else if (
+            hapticAPI.impactOccurred
+        ) {
+
+            hapticAPI.impactOccurred(
+                type
+            );
+
+        }
+
+    }
+
+}
+
+
+// ---------------------------------------------------------
+// UTILITAIRES
+// ---------------------------------------------------------
+
+function formatPrice(number) {
+
+    return Number(number).toLocaleString(
+        "fr-FR"
     );
+
+}
+
+
+function getValue(id) {
+
+    const element =
+        document.getElementById(id);
+
+
+    if (!element) return "";
+
+
+    return element.value.trim();
+
+}
+
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 
 }
