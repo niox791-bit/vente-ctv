@@ -8,8 +8,8 @@ const products = [
         id: 1,
         name: "JNR Falcon",
         desc: "Mytille / Cerise",
-        priceNum: 15000,
-        price: "15 000 FCFA",
+        priceNum: 15,
+        price: "15 €",
         likes: 8,
         stock: 20,
         category: "categories",
@@ -19,9 +19,9 @@ const products = [
     {
         id: 2,
         name: "JNR Falcon X 28000",
-        desc: "Fraîse / Kiwi",
-        priceNum: 18000,
-        price: "18 000 FCFA",
+        desc: "Fraise / Kiwi",
+        priceNum: 18,
+        price: "18 €",
         likes: 12,
         stock: 20,
         category: "new",
@@ -32,8 +32,8 @@ const products = [
         id: 3,
         name: "JNR Vapor",
         desc: "Collection JNR",
-        priceNum: 16000,
-        price: "16 000 FCFA",
+        priceNum: 16,
+        price: "16 €",
         likes: 10,
         stock: 20,
         category: "liked",
@@ -44,8 +44,8 @@ const products = [
         id: 4,
         name: "JNR Collection",
         desc: "Édition spéciale",
-        priceNum: 20000,
-        price: "20 000 FCFA",
+        priceNum: 20,
+        price: "20 €",
         likes: 7,
         stock: 20,
         category: "categories",
@@ -53,6 +53,13 @@ const products = [
     }
 
 ];
+
+
+/* =========================================================
+   CONFIGURATION BACKEND
+========================================================= */
+
+const API_BASE_URL = "https://jnr-backend.onrender.com";
 
 
 /* =========================================================
@@ -95,6 +102,7 @@ function initTelegram() {
         const tg =
             window.Telegram.WebApp;
 
+
         tg.ready();
 
         tg.expand();
@@ -121,10 +129,12 @@ function initTelegram() {
             const user =
                 tg.initDataUnsafe.user;
 
+
             const name =
                 document.getElementById(
                     "client-name"
                 );
+
 
             if (name) {
 
@@ -421,11 +431,6 @@ function toggleLike(event, id) {
     product.likes++;
 
 
-    /*
-     * On conserve le filtre actuel
-     * en réaffichant les produits.
-     */
-
     const activeButton =
         document.querySelector(
             ".pill-btn.active"
@@ -474,7 +479,9 @@ function addToCart(id) {
 
     if (product.stock <= 0) {
 
-        alert("Ce produit est en rupture de stock.");
+        alert(
+            "Ce produit est en rupture de stock."
+        );
 
         return;
 
@@ -500,6 +507,7 @@ function addToCart(id) {
 
         }
 
+
         item.qty++;
 
     } else {
@@ -519,10 +527,6 @@ function addToCart(id) {
 
     haptic("success");
 
-
-    /*
-     * Animation du badge panier.
-     */
 
     const badge =
         document.getElementById(
@@ -557,6 +561,30 @@ function updateQuantity(id, change) {
 
 
     if (!item) return;
+
+
+    const product =
+        products.find(
+            product =>
+                product.id === id
+        );
+
+
+    if (!product) return;
+
+
+    if (
+        change > 0 &&
+        item.qty >= product.stock
+    ) {
+
+        alert(
+            "Vous avez atteint le stock disponible."
+        );
+
+        return;
+
+    }
 
 
     item.qty += change;
@@ -640,6 +668,7 @@ function updateCartUI() {
 
         `;
 
+
         summary.classList.add("hidden");
 
         return;
@@ -660,11 +689,13 @@ function updateCartUI() {
                         alt="${item.name}"
                     >
 
+
                     <div class="cart-item-details">
 
                         <h4>
                             ${item.name}
                         </h4>
+
 
                         <span>
                             ${item.price}
@@ -715,22 +746,39 @@ function updateCartUI() {
         );
 
 
-    const shipping = 1500;
+    const shipping = 1.50;
+
 
     const total =
         subtotal + shipping;
 
 
-    document.getElementById(
-        "subtotal-amount"
-    ).textContent =
-        `${formatPrice(subtotal)} FCFA`;
+    const subtotalElement =
+        document.getElementById(
+            "subtotal-amount"
+        );
 
 
-    document.getElementById(
-        "total-amount"
-    ).textContent =
-        `${formatPrice(total)} FCFA`;
+    const totalElement =
+        document.getElementById(
+            "total-amount"
+        );
+
+
+    if (subtotalElement) {
+
+        subtotalElement.textContent =
+            `${formatPrice(subtotal)} €`;
+
+    }
+
+
+    if (totalElement) {
+
+        totalElement.textContent =
+            `${formatPrice(total)} €`;
+
+    }
 
 
     summary.classList.remove("hidden");
@@ -745,16 +793,19 @@ function updateCartUI() {
 function formatPrice(number) {
 
     return Number(number)
-        .toLocaleString("fr-FR");
+        .toLocaleString("fr-FR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
 
 }
 
 
 /* =========================================================
-   CHECKOUT
+   CHECKOUT STRIPE
 ========================================================= */
 
-function checkout() {
+async function checkout() {
 
     if (cart.length === 0) {
 
@@ -765,32 +816,52 @@ function checkout() {
     }
 
 
+    const nameElement =
+        document.getElementById(
+            "client-name"
+        );
+
+
+    const phoneElement =
+        document.getElementById(
+            "client-phone"
+        );
+
+
+    const addressElement =
+        document.getElementById(
+            "client-address"
+        );
+
+
+    const notesElement =
+        document.getElementById(
+            "client-notes"
+        );
+
+
     const name =
-        document
-            .getElementById("client-name")
-            .value
-            .trim();
+        nameElement
+            ? nameElement.value.trim()
+            : "";
 
 
     const phone =
-        document
-            .getElementById("client-phone")
-            .value
-            .trim();
+        phoneElement
+            ? phoneElement.value.trim()
+            : "";
 
 
     const address =
-        document
-            .getElementById("client-address")
-            .value
-            .trim();
+        addressElement
+            ? addressElement.value.trim()
+            : "";
 
 
     const notes =
-        document
-            .getElementById("client-notes")
-            .value
-            .trim();
+        notesElement
+            ? notesElement.value.trim()
+            : "";
 
 
     if (!name || !phone || !address) {
@@ -804,40 +875,6 @@ function checkout() {
     }
 
 
-    let message =
-        "📋 NOUVELLE COMMANDE\n\n";
-
-
-    message +=
-        `👤 Nom : ${name}\n`;
-
-    message +=
-        `📞 Téléphone : ${phone}\n`;
-
-    message +=
-        `📍 Adresse : ${address}\n`;
-
-
-    if (notes) {
-
-        message +=
-            `📝 Note : ${notes}\n`;
-
-    }
-
-
-    message +=
-        "\n🛒 ARTICLES :\n";
-
-
-    cart.forEach(item => {
-
-        message +=
-            `• ${item.name} x${item.qty} — ${item.price}\n`;
-
-    });
-
-
     const subtotal =
         cart.reduce(
             (total, item) =>
@@ -847,66 +884,164 @@ function checkout() {
         );
 
 
-    const shipping = 1500;
+    const shipping = 1.50;
+
 
     const total =
         subtotal + shipping;
 
 
-    message +=
-        `\n💰 Sous-total : ${formatPrice(subtotal)} FCFA`;
+    const orderItems =
+        cart.map(item => ({
 
-    message +=
-        `\n🚚 Livraison : ${formatPrice(shipping)} FCFA`;
+            id: item.id,
 
-    message +=
-        `\n✅ TOTAL : ${formatPrice(total)} FCFA`;
+            name: item.name,
+
+            quantity: item.qty,
+
+            unit_price: item.priceNum
+
+        }));
 
 
-    /*
-     * Telegram
-     */
+    const payload = {
 
-    if (
-        window.Telegram &&
-        window.Telegram.WebApp
-    ) {
+        customer: {
+
+            name: name,
+
+            phone: phone,
+
+            address: address,
+
+            notes: notes
+
+        },
+
+        items: orderItems,
+
+        subtotal: subtotal,
+
+        shipping: shipping,
+
+        total: total,
+
+        currency: "eur"
+
+    };
+
+
+    const checkoutButton =
+        document.querySelector(
+            '[onclick="checkout()"]'
+        );
+
+
+    const originalButtonText =
+        checkoutButton
+            ? checkoutButton.innerHTML
+            : "";
+
+
+    try {
+
+        if (checkoutButton) {
+
+            checkoutButton.disabled = true;
+
+            checkoutButton.innerHTML =
+                '<i class="fa-solid fa-spinner fa-spin"></i> Paiement...';
+
+        }
+
+
+        const response =
+            await fetch(
+                `${API_BASE_URL}/create-checkout-session`,
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify(payload)
+
+                }
+            );
+
+
+        let data = null;
+
 
         try {
 
-            window.Telegram.WebApp.sendData(
-                message
+            data =
+                await response.json();
+
+        } catch (jsonError) {
+
+            throw new Error(
+                "Le serveur a renvoyé une réponse invalide."
             );
 
-            alert(
-                "Commande envoyée !"
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.detail ||
+                data.message ||
+                "Impossible de créer le paiement."
             );
 
-            return;
+        }
 
-        } catch (error) {
 
-            console.log(error);
+        if (!data.url) {
+
+            throw new Error(
+                "Stripe n'a pas fourni de lien de paiement."
+            );
+
+        }
+
+
+        window.location.href =
+            data.url;
+
+
+    } catch (error) {
+
+        console.error(
+            "Erreur paiement :",
+            error
+        );
+
+
+        alert(
+            "Impossible de lancer le paiement.\n\n" +
+            error.message
+        );
+
+
+        if (checkoutButton) {
+
+            checkoutButton.disabled = false;
+
+            checkoutButton.innerHTML =
+                originalButtonText;
 
         }
 
     }
-
-
-    /*
-     * Ouverture du bot
-     * si le site est lancé
-     * hors Telegram.
-     */
-
-    const encoded =
-        encodeURIComponent(message);
-
-
-    window.open(
-        `https://t.me/vente_puff_bot?text=${encoded}`,
-        "_blank"
-    );
 
 }
 
