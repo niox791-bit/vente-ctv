@@ -1,10 +1,9 @@
 
 /* =========================================================
    PRODUITS JNR
-========================================================= */
+   ========================================================= */
 
 const products = [
-
     {
         id: 1,
         name: "JNR Falcon",
@@ -52,13 +51,12 @@ const products = [
         category: "categories",
         image: "images/jnr-falcon-kiwi.jpg"
     }
-
 ];
 
 
 /* =========================================================
-   CONFIGURATION BACKEND
-========================================================= */
+   CONFIGURATION BACKEND PAYDUNYA
+   ========================================================= */
 
 const API_BASE_URL =
     "https://jnr-backend.onrender.com";
@@ -66,14 +64,14 @@ const API_BASE_URL =
 
 /* =========================================================
    PANIER
-========================================================= */
+   ========================================================= */
 
 let cart = [];
 
 
 /* =========================================================
    INITIALISATION
-========================================================= */
+   ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -88,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /* =========================================================
    TELEGRAM
-========================================================= */
+   ========================================================= */
 
 function initTelegram() {
 
@@ -119,7 +117,7 @@ function initTelegram() {
         } catch (error) {
 
             console.log(
-                "Configuration Telegram WebApp impossible."
+                "Configuration Telegram indisponible."
             );
 
         }
@@ -144,7 +142,7 @@ function initTelegram() {
 
                 name.value =
                     `${user.first_name || ""} ${user.last_name || ""}`
-                    .trim();
+                        .trim();
 
             }
 
@@ -184,7 +182,7 @@ function initTelegram() {
 
 /* =========================================================
    NAVIGATION
-========================================================= */
+   ========================================================= */
 
 function switchTab(tabName, element) {
 
@@ -229,11 +227,8 @@ function switchTab(tabName, element) {
 
 
     window.scrollTo({
-
         top: 0,
-
         behavior: "smooth"
-
     });
 
 }
@@ -241,7 +236,7 @@ function switchTab(tabName, element) {
 
 /* =========================================================
    PRODUITS
-========================================================= */
+   ========================================================= */
 
 function renderProducts(items) {
 
@@ -257,14 +252,12 @@ function renderProducts(items) {
     if (!items.length) {
 
         grid.innerHTML = `
-
             <div style="
                 grid-column:1/-1;
                 text-align:center;
                 padding:40px;
                 color:#888;
             ">
-
                 <i
                     class="fa-solid fa-box-open"
                     style="
@@ -276,9 +269,7 @@ function renderProducts(items) {
                 <br><br>
 
                 Aucun produit disponible.
-
             </div>
-
         `;
 
         return;
@@ -296,12 +287,7 @@ function renderProducts(items) {
 
                 <div
                     class="heart-badge"
-                    onclick="
-                        toggleLike(
-                            event,
-                            ${product.id}
-                        )
-                    "
+                    onclick="toggleLike(event, ${product.id})"
                 >
 
                     <i class="fa-solid fa-heart"></i>
@@ -324,16 +310,12 @@ function renderProducts(items) {
 
 
                 <div class="product-name">
-
                     ${product.name}
-
                 </div>
 
 
                 <div class="product-desc">
-
                     ${product.desc}
-
                 </div>
 
 
@@ -347,9 +329,7 @@ function renderProducts(items) {
 
 
                 <span class="product-tag">
-
                     ${product.price}
-
                 </span>
 
             </div>
@@ -361,7 +341,7 @@ function renderProducts(items) {
 
 /* =========================================================
    FILTRES
-========================================================= */
+   ========================================================= */
 
 function filterProducts(type, element) {
 
@@ -420,7 +400,7 @@ function filterProducts(type, element) {
 
 /* =========================================================
    LIKE
-========================================================= */
+   ========================================================= */
 
 function toggleLike(event, id) {
 
@@ -472,7 +452,7 @@ function toggleLike(event, id) {
 
 /* =========================================================
    AJOUT PANIER
-========================================================= */
+   ========================================================= */
 
 function addToCart(id) {
 
@@ -558,7 +538,7 @@ function addToCart(id) {
 
 /* =========================================================
    QUANTITÉ
-========================================================= */
+   ========================================================= */
 
 function updateQuantity(id, change) {
 
@@ -617,7 +597,7 @@ function updateQuantity(id, change) {
 
 /* =========================================================
    PANIER
-========================================================= */
+   ========================================================= */
 
 function updateCartUI() {
 
@@ -660,7 +640,6 @@ function updateCartUI() {
     if (cart.length === 0) {
 
         container.innerHTML = `
-
             <div class="empty-cart">
 
                 <i
@@ -676,7 +655,6 @@ function updateCartUI() {
                 Ajoutez un produit depuis l'accueil.
 
             </div>
-
         `;
 
 
@@ -721,32 +699,20 @@ function updateCartUI() {
 
                     <button
                         class="qty-btn"
-                        onclick="
-                            updateQuantity(
-                                ${item.id},
-                                -1
-                            )
-                        "
+                        onclick="updateQuantity(${item.id}, -1)"
                     >
                         −
                     </button>
 
 
                     <span class="qty-number">
-
                         ${item.qty}
-
                     </span>
 
 
                     <button
                         class="qty-btn"
-                        onclick="
-                            updateQuantity(
-                                ${item.id},
-                                1
-                            )
-                        "
+                        onclick="updateQuantity(${item.id}, 1)"
                     >
                         +
                     </button>
@@ -809,7 +775,7 @@ function updateCartUI() {
 
 /* =========================================================
    PRIX
-========================================================= */
+   ========================================================= */
 
 function formatPrice(number) {
 
@@ -826,7 +792,7 @@ function formatPrice(number) {
 
 /* =========================================================
    CHECKOUT PAYDUNYA
-========================================================= */
+   ========================================================= */
 
 async function checkout() {
 
@@ -840,10 +806,6 @@ async function checkout() {
 
     }
 
-
-    /* -----------------------------------------------------
-       INFORMATIONS CLIENT
-    ----------------------------------------------------- */
 
     const nameElement =
         document.getElementById(
@@ -893,7 +855,11 @@ async function checkout() {
             : "";
 
 
-    if (!name || !phone || !address) {
+    if (
+        !name ||
+        !phone ||
+        !address
+    ) {
 
         alert(
             "Veuillez remplir votre nom, téléphone et adresse."
@@ -904,9 +870,13 @@ async function checkout() {
     }
 
 
-    /* -----------------------------------------------------
-       ARTICLES
-    ----------------------------------------------------- */
+    /*
+     * Le backend PayDunya attend uniquement :
+     * - customer
+     * - items
+     *
+     * Les prix sont en FCFA.
+     */
 
     const orderItems =
         cart.map(item => ({
@@ -918,9 +888,24 @@ async function checkout() {
         }));
 
 
-    /* -----------------------------------------------------
-       BOUTON
-    ----------------------------------------------------- */
+    const payload = {
+
+        customer: {
+
+            name: name,
+
+            phone: phone,
+
+            address: address,
+
+            notes: notes
+
+        },
+
+        items: orderItems
+
+    };
+
 
     const checkoutButton =
         document.querySelector(
@@ -934,10 +919,6 @@ async function checkout() {
             : "";
 
 
-    /* -----------------------------------------------------
-       ENVOI AU BACKEND
-    ----------------------------------------------------- */
-
     try {
 
         if (checkoutButton) {
@@ -945,7 +926,7 @@ async function checkout() {
             checkoutButton.disabled = true;
 
             checkoutButton.innerHTML =
-                '<i class="fa-solid fa-spinner fa-spin"></i> Paiement...';
+                '<i class="fa-solid fa-spinner fa-spin"></i> Ouverture du paiement...';
 
         }
 
@@ -964,31 +945,12 @@ async function checkout() {
 
                     },
 
-                    body: JSON.stringify({
-
-                        customer: {
-
-                            name: name,
-
-                            phone: phone,
-
-                            address: address,
-
-                            notes: notes
-
-                        },
-
-                        items: orderItems
-
-                    })
+                    body:
+                        JSON.stringify(payload)
 
                 }
             );
 
-
-        /* -------------------------------------------------
-           REPONSE
-        ------------------------------------------------- */
 
         let data;
 
@@ -998,7 +960,7 @@ async function checkout() {
             data =
                 await response.json();
 
-        } catch (error) {
+        } catch (jsonError) {
 
             throw new Error(
                 "Le serveur a renvoyé une réponse invalide."
@@ -1006,10 +968,6 @@ async function checkout() {
 
         }
 
-
-        /* -------------------------------------------------
-           ERREUR
-        ------------------------------------------------- */
 
         if (!response.ok) {
 
@@ -1022,10 +980,6 @@ async function checkout() {
         }
 
 
-        /* -------------------------------------------------
-           URL PAYDUNYA
-        ------------------------------------------------- */
-
         if (!data.url) {
 
             throw new Error(
@@ -1035,9 +989,10 @@ async function checkout() {
         }
 
 
-        /* -------------------------------------------------
-           REDIRECTION PAYDUNYA
-        ------------------------------------------------- */
+        /*
+         * Redirection directe vers
+         * la page de paiement PayDunya.
+         */
 
         window.location.href =
             data.url;
@@ -1046,7 +1001,7 @@ async function checkout() {
     } catch (error) {
 
         console.error(
-            "Erreur paiement PayDunya :",
+            "Erreur paiement :",
             error
         );
 
@@ -1073,7 +1028,7 @@ async function checkout() {
 
 /* =========================================================
    HAPTIC TELEGRAM
-========================================================= */
+   ========================================================= */
 
 function haptic(type) {
 
@@ -1083,19 +1038,19 @@ function haptic(type) {
         window.Telegram.WebApp.HapticFeedback
     ) {
 
-        const haptic =
+        const telegramHaptic =
             window.Telegram.WebApp.HapticFeedback;
 
 
         if (type === "success") {
 
-            haptic.notificationOccurred(
+            telegramHaptic.notificationOccurred(
                 "success"
             );
 
         } else {
 
-            haptic.impactOccurred(
+            telegramHaptic.impactOccurred(
                 type
             );
 
