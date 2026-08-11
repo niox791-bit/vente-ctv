@@ -8,10 +8,15 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
 
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -20,16 +25,36 @@
 
 <body>
 
-<!-- =========================================
-     PETIT FOND ANIMÉ
-========================================= -->
+<!-- =========================================================
+     ÉCRAN DE CHARGEMENT
+========================================================= -->
+
+<div id="loading-screen">
+    <div class="loading-logo">
+        <span>JNR</span>
+    </div>
+
+    <div class="loading-title">JNR Shop</div>
+
+    <div class="loading-bar">
+        <div class="loading-progress"></div>
+    </div>
+
+    <div class="loading-text">Chargement...</div>
+</div>
+
+
+<!-- =========================================================
+     FOND ANIMÉ
+========================================================= -->
 
 <div class="background-orb orb-one">JNR</div>
 <div class="background-orb orb-two">JNR</div>
 
-<!-- =========================================
+
+<!-- =========================================================
      BARRE TELEGRAM
-========================================= -->
+========================================================= -->
 
 <div class="tg-top-bar">
 
@@ -46,23 +71,19 @@
 </div>
 
 
-<!-- =========================================
+<!-- =========================================================
      HEADER
-========================================= -->
+========================================================= -->
 
 <header class="main-header">
 
     <div class="logo-ring">
-
         <div class="glow-avatar">
             <span>JNR</span>
         </div>
-
     </div>
 
-    <h1 class="store-title">
-        JNR Shop
-    </h1>
+    <h1 class="store-title">JNR Shop</h1>
 
     <p class="store-subtitle">
         Boutique officielle JNR
@@ -71,12 +92,11 @@
 </header>
 
 
-<!-- =========================================
+<!-- =========================================================
      CONTENU
-========================================= -->
+========================================================= -->
 
 <main class="main-container">
-
 
     <!-- ================= ACCUEIL ================= -->
 
@@ -84,37 +104,33 @@
 
         <div class="pills-container">
 
-            <button class="pill-btn active"
-                    onclick="filterProducts('categories', this)">
-
+            <button
+                class="pill-btn active"
+                onclick="filterProducts('categories', this)"
+            >
                 <i class="fa-solid fa-border-all"></i>
                 Catégories
-
             </button>
 
-            <button class="pill-btn"
-                    onclick="filterProducts('liked', this)">
-
+            <button
+                class="pill-btn"
+                onclick="filterProducts('liked', this)"
+            >
                 <i class="fa-solid fa-heart"></i>
                 Plus aimé
-
             </button>
 
-            <button class="pill-btn"
-                    onclick="filterProducts('new', this)">
-
+            <button
+                class="pill-btn"
+                onclick="filterProducts('new', this)"
+            >
                 <i class="fa-solid fa-bolt"></i>
                 Nouveau
-
             </button>
 
         </div>
 
-
-        <div id="products-grid"
-             class="products-grid">
-
-        </div>
+        <div id="products-grid" class="products-grid"></div>
 
     </section>
 
@@ -129,7 +145,6 @@
         </h2>
 
         <div class="review-card">
-
             <div class="review-header">
                 <strong>Marc A.</strong>
                 <span>★★★★★</span>
@@ -138,12 +153,9 @@
             <p>
                 Très bonne commande, vendeur sérieux.
             </p>
-
         </div>
 
-
         <div class="review-card">
-
             <div class="review-header">
                 <strong>Sophie K.</strong>
                 <span>★★★★★</span>
@@ -152,12 +164,9 @@
             <p>
                 Commande rapide et produits conformes.
             </p>
-
         </div>
 
-
         <div class="review-card">
-
             <div class="review-header">
                 <strong>Kevin M.</strong>
                 <span>★★★★★</span>
@@ -166,7 +175,6 @@
             <p>
                 Très satisfait de ma commande.
             </p>
-
         </div>
 
     </section>
@@ -183,15 +191,14 @@
 
         <div id="cart-items-container"></div>
 
-
-        <div id="cart-summary"
-             class="cart-summary-box hidden">
+        <div
+            id="cart-summary"
+            class="cart-summary-box hidden"
+        >
 
             <div class="summary-line">
                 <span>Sous-total</span>
-                <span id="subtotal-amount">
-                    0 FCFA
-                </span>
+                <span id="subtotal-amount">0 FCFA</span>
             </div>
 
             <div class="summary-line">
@@ -203,11 +210,8 @@
 
             <div class="summary-line total-line">
                 <span>Total</span>
-                <span id="total-amount">
-                    0 FCFA
-                </span>
+                <span id="total-amount">0 FCFA</span>
             </div>
-
 
             <div class="checkout-form">
 
@@ -217,60 +221,51 @@
                 </h3>
 
                 <div class="input-group">
-
                     <label>Nom complet</label>
 
                     <input
                         type="text"
                         id="client-name"
-                        placeholder="Votre nom">
-
+                        placeholder="Votre nom"
+                    >
                 </div>
 
-
                 <div class="input-group">
-
                     <label>Téléphone</label>
 
                     <input
                         type="tel"
                         id="client-phone"
-                        placeholder="+225 07 00 00 00 00">
-
+                        placeholder="+225 07 00 00 00 00"
+                    >
                 </div>
 
-
                 <div class="input-group">
-
                     <label>Adresse / Commune</label>
 
                     <input
                         type="text"
                         id="client-address"
-                        placeholder="Ex : Cocody">
-
+                        placeholder="Ex : Cocody"
+                    >
                 </div>
 
-
                 <div class="input-group">
-
                     <label>Note</label>
 
                     <textarea
                         id="client-notes"
                         rows="3"
-                        placeholder="Information supplémentaire"></textarea>
-
+                        placeholder="Information supplémentaire"
+                    ></textarea>
                 </div>
 
-
-                <button class="btn-checkout"
-                        onclick="checkout()">
-
+                <button
+                    class="btn-checkout"
+                    onclick="checkout()"
+                >
                     <i class="fa-brands fa-telegram"></i>
-
                     Confirmer la commande
-
                 </button>
 
             </div>
@@ -289,38 +284,29 @@
             Informations
         </h2>
 
-
         <div class="info-card">
-
             <h4>Horaires</h4>
 
             <p>
                 Lundi - Samedi<br>
                 08h00 - 20h00
             </p>
-
         </div>
 
-
         <div class="info-card">
-
             <h4>Livraison</h4>
 
             <p>
                 Livraison selon votre zone.
             </p>
-
         </div>
 
-
         <div class="info-card">
-
             <h4>Commande</h4>
 
             <p>
                 Les commandes sont traitées directement via Telegram.
             </p>
-
         </div>
 
     </section>
@@ -335,23 +321,20 @@
             Contact
         </h2>
 
-
         <div class="contact-card">
 
             <p>
                 Une question ou besoin d'aide ?
             </p>
 
-
             <a
                 href="https://t.me/vente_puff_bot"
                 target="_blank"
-                class="btn-contact-tg">
-
+                rel="noopener"
+                class="btn-contact-tg"
+            >
                 <i class="fa-brands fa-telegram"></i>
-
                 Contacter sur Telegram
-
             </a>
 
         </div>
@@ -361,9 +344,9 @@
 </main>
 
 
-<!-- =========================================
+<!-- =========================================================
      FOOTER
-========================================= -->
+========================================================= -->
 
 <div class="footer-branding">
 
@@ -371,83 +354,237 @@
 
     Boutique créée avec
 
-    <a href="https://t.me/vente_puff_bot"
-       target="_blank">
-
+    <a
+        href="https://t.me/vente_puff_bot"
+        target="_blank"
+        rel="noopener"
+    >
         @vente_puff_bot
-
     </a>
 
 </div>
 
 
-<!-- =========================================
+<!-- =========================================================
      NAVIGATION
-========================================= -->
+========================================================= -->
 
 <nav class="bottom-nav">
 
-    <button class="nav-item active"
-            onclick="switchTab('accueil', this)">
-
+    <button
+        class="nav-item active"
+        onclick="switchTab('accueil', this)"
+    >
         <i class="fa-solid fa-house"></i>
-
         <span>Accueil</span>
-
     </button>
 
-
-    <button class="nav-item"
-            onclick="switchTab('avis', this)">
-
+    <button
+        class="nav-item"
+        onclick="switchTab('avis', this)"
+    >
         <i class="fa-solid fa-star"></i>
-
         <span>Avis</span>
-
     </button>
 
-
-    <button class="nav-item"
-            onclick="switchTab('panier', this)">
-
+    <button
+        class="nav-item"
+        onclick="switchTab('panier', this)"
+    >
         <div class="icon-wrapper">
-
             <i class="fa-solid fa-basket-shopping"></i>
 
-            <span id="cart-count"
-                  class="badge">
-
+            <span
+                id="cart-count"
+                class="badge"
+            >
                 0
-
             </span>
-
         </div>
 
         <span>Panier</span>
-
     </button>
 
-
-    <button class="nav-item"
-            onclick="switchTab('infos', this)">
-
+    <button
+        class="nav-item"
+        onclick="switchTab('infos', this)"
+    >
         <i class="fa-solid fa-circle-info"></i>
-
         <span>Infos</span>
-
     </button>
 
-
-    <button class="nav-item"
-            onclick="switchTab('contact', this)">
-
+    <button
+        class="nav-item"
+        onclick="switchTab('contact', this)"
+    >
         <i class="fa-solid fa-comment"></i>
-
         <span>Contact</span>
-
     </button>
 
 </nav>
+
+
+<!-- =========================================================
+     FICHE PRODUIT
+========================================================= -->
+
+<div
+    id="product-modal"
+    class="modal-overlay hidden"
+    onclick="closeProductModal(event)"
+>
+
+    <div
+        class="product-modal"
+        onclick="event.stopPropagation()"
+    >
+
+        <button
+            class="modal-close"
+            onclick="closeProductModal()"
+            aria-label="Fermer"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="detail-image-container">
+
+            <img
+                id="detail-image"
+                src=""
+                alt=""
+            >
+
+            <div class="zoom-hint">
+                <i class="fa-solid fa-magnifying-glass-plus"></i>
+                Appuyez pour zoomer
+            </div>
+
+        </div>
+
+        <div class="detail-content">
+
+            <div class="detail-category" id="detail-category">
+                JNR
+            </div>
+
+            <h2 id="detail-name">
+                Produit
+            </h2>
+
+            <p
+                id="detail-description"
+                class="detail-description"
+            >
+                Description
+            </p>
+
+            <div class="detail-info-row">
+
+                <div class="detail-price">
+                    <span>Prix</span>
+                    <strong id="detail-price">
+                        0 FCFA
+                    </strong>
+                </div>
+
+                <div class="detail-stock">
+                    <span>Stock</span>
+                    <strong id="detail-stock">
+                        0
+                    </strong>
+                </div>
+
+            </div>
+
+            <button
+                id="detail-add-button"
+                class="detail-add-button"
+            >
+                <i class="fa-solid fa-cart-plus"></i>
+                Ajouter au panier
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     ZOOM IMAGE
+========================================================= -->
+
+<div
+    id="image-zoom"
+    class="image-zoom-overlay hidden"
+    onclick="closeImageZoom()"
+>
+
+    <button
+        class="zoom-close"
+        onclick="closeImageZoom()"
+    >
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <img
+        id="zoom-image"
+        src=""
+        alt=""
+    >
+
+</div>
+
+
+<!-- =========================================================
+     POPUP PANIER
+========================================================= -->
+
+<div
+    id="cart-popup-overlay"
+    class="cart-popup-overlay hidden"
+    onclick="closeCartPopup(event)"
+>
+
+    <div
+        class="cart-popup"
+        onclick="event.stopPropagation()"
+    >
+
+        <div class="popup-icon">
+            <i class="fa-solid fa-check"></i>
+        </div>
+
+        <h3>Produit ajouté !</h3>
+
+        <p>
+            Le produit a été ajouté à votre panier.
+        </p>
+
+        <div class="popup-actions">
+
+            <button
+                class="popup-secondary"
+                onclick="continueShopping()"
+            >
+                Continuer mes achats
+            </button>
+
+            <button
+                class="popup-primary"
+                onclick="goToCart()"
+            >
+                <i class="fa-solid fa-basket-shopping"></i>
+                Voir le panier
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 
 
 <script src="app.js"></script>
