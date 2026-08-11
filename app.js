@@ -13,7 +13,7 @@ const products = [
         likes: 18,
         stock: 119,
         category: "new",
-        image: "https://placehold.co/700x700/101010/008cff?text=Strawberry+Watermelon+Ice"
+        image: "images/default (1).jpg"
     },
     {
         id: 2,
@@ -24,7 +24,7 @@ const products = [
         likes: 24,
         stock: 119,
         category: "categories",
-        image: "https://placehold.co/700x700/101010/008cff?text=Mixed+Berries"
+        image: "images/default (1).webp"
     },
     {
         id: 3,
@@ -35,7 +35,7 @@ const products = [
         likes: 31,
         stock: 119,
         category: "liked",
-        image: "https://placehold.co/700x700/101010/008cff?text=Black+Dragon+Ice"
+image: "images/default (2).jpg"
     },
     {
         id: 4,
@@ -46,7 +46,7 @@ const products = [
         likes: 16,
         stock: 119,
         category: "categories",
-        image: "https://placehold.co/700x700/101010/008cff?text=Peach+Berry"
+        image: "images/default (2).webp"
     },
     {
         id: 5,
@@ -57,7 +57,7 @@ const products = [
         likes: 27,
         stock: 119,
         category: "new",
-        image: "https://placehold.co/700x700/101010/008cff?text=Blueberry+Pomegranate"
+        image: "images/default (3).jpg"
     },
     {
         id: 6,
@@ -68,7 +68,7 @@ const products = [
         likes: 22,
         stock: 119,
         category: "categories",
-        image: "https://placehold.co/700x700/101010/008cff?text=Blackberry+Raspberry"
+        image: "images/default (3).webp"
     },
     {
         id: 7,
@@ -79,7 +79,7 @@ const products = [
         likes: 35,
         stock: 119,
         category: "liked",
-        image: "https://placehold.co/700x700/101010/008cff?text=Mango+Passion+Fruit"
+        image: "images/default (4).jpg"
     },
     {
         id: 8,
@@ -90,7 +90,7 @@ const products = [
         likes: 29,
         stock: 119,
         category: "new",
-        image: "https://placehold.co/700x700/101010/008cff?text=Strawberry+Kiwi"
+        image: "images/default (4).webp"
     },
     {
         id: 9,
@@ -101,7 +101,7 @@ const products = [
         likes: 19,
         stock: 119,
         category: "categories",
-        image: "https://placehold.co/700x700/101010/008cff?text=Watermelon+Mango+Peach"
+        image: "images/default (5).jpg"
     },
     {
         id: 10,
@@ -112,7 +112,7 @@ const products = [
         likes: 26,
         stock: 119,
         category: "liked",
-        image: "https://placehold.co/700x700/101010/008cff?text=Blueberry+Raspberry+Cherry"
+        image: "images/default (5).webp"
     },
     {
         id: 11,
@@ -123,7 +123,7 @@ const products = [
         likes: 33,
         stock: 119,
         category: "new",
-        image: "https://placehold.co/700x700/101010/008cff?text=Watermelon+Bubblegum"
+        image: "images/default (6).jpg"
     },
     {
         id: 12,
@@ -134,7 +134,7 @@ const products = [
         likes: 37,
         stock: 119,
         category: "liked",
-        image: "https://placehold.co/700x700/101010/008cff?text=Cherry+Watermelon"
+        image: "images/default (6).webp"
     },
     {
         id: 13,
@@ -145,7 +145,7 @@ const products = [
         likes: 15,
         stock: 119,
         category: "categories",
-        image: "https://placehold.co/700x700/101010/008cff?text=Cherry+Ice"
+        image: "images/default (7).jpg"
     },
     {
         id: 14,
@@ -156,7 +156,7 @@ const products = [
         likes: 32,
         stock: 119,
         category: "new",
-        image: "https://placehold.co/700x700/101010/008cff?text=Blueberry+Sour+Raspberry"
+        image: "images/default (7).webp"
     },
     {
         id: 15,
@@ -167,7 +167,7 @@ const products = [
         likes: 21,
         stock: 119,
         category: "categories",
-        image: "https://placehold.co/700x700/101010/008cff?text=Watermelon+Ice"
+        image: "images/default (8).jpg"
     },
     {
         id: 16,
@@ -178,7 +178,7 @@ const products = [
         likes: 40,
         stock: 119,
         category: "liked",
-        image: "https://placehold.co/700x700/101010/008cff?text=Love+66"
+image: "images/default (8).webp"
     },
     {
         id: 17,
@@ -189,7 +189,7 @@ const products = [
         likes: 28,
         stock: 119,
         category: "new",
-        image: "https://placehold.co/700x700/101010/008cff?text=Fizzy+Cherry+Cola"
+        image: "images/default (9).webp"
     },
     {
         id: 18,
@@ -200,7 +200,7 @@ const products = [
         likes: 34,
         stock: 119,
         category: "liked",
-        image: "https://placehold.co/700x700/101010/008cff?text=Golden+Dragon+Ice"
+    image: "images/default.jpg"
     }
 ];
 
