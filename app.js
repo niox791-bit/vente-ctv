@@ -1284,154 +1284,60 @@ function formatPrice(number) {
    PAIEMENT PAYDUNYA
    CONSERVÉ
 ========================================================= */
-
 async function checkout() {
-
     if (cart.length === 0) {
-
-        alert(
-            "Votre panier est vide."
-        );
-
+        alert("Votre panier est vide.");
         return;
     }
 
-    const nameElement =
-        document.getElementById(
-            "client-name"
-        );
+    const name = document.getElementById("client-name")?.value.trim() || "";
+    const phone = document.getElementById("client-phone")?.value.trim() || "";
+    const address = document.getElementById("client-address")?.value.trim() || "";
+    const notes = document.getElementById("client-notes")?.value.trim() || "";
 
-    const phoneElement =
-        document.getElementById(
-            "client-phone"
-        );
-
-    const addressElement =
-        document.getElementById(
-            "client-address"
-        );
-
-    const notesElement =
-        document.getElementById(
-            "client-notes"
-        );
-
-    const name =
-        nameElement
-            ? nameElement.value.trim()
-            : "";
-
-    const phone =
-        phoneElement
-            ? phoneElement.value.trim()
-            : "";
-
-    const address =
-        addressElement
-            ? addressElement.value.trim()
-            : "";
-
-    const notes =
-        notesElement
-            ? notesElement.value.trim()
-            : "";
-
-    if (
-        !name ||
-        !phone ||
-        !address
-    ) {
-
-        alert(
-            "Veuillez remplir votre nom, téléphone et adresse."
-        );
-
+    if (!name || !phone || !address) {
+        alert("Veuillez remplir votre nom, téléphone et adresse.");
         return;
     }
 
-    /*
-        Le backend PayDunya calcule lui-même
-        le montant total en FCFA.
-
-        Le navigateur envoie uniquement :
-        - les informations client
-        - les produits
-        - les quantités
-    */
-
-    const orderItems =
-        cart.map(item => ({
-            id: item.id,
-            quantity: item.qty
-        }));
+    const checkoutButton = document.querySelector('[onclick="checkout()"]');
+    const originalButtonText = checkoutButton
+        ? checkoutButton.innerHTML
+        : "";
 
     const payload = {
-
-        customer: {
-            name: name,
-            phone: phone,
-            address: address,
-            notes: notes
-        },
-
-        items: orderItems
+        customer_name: name,
+        customer_phone: phone,
+        customer_address: address,
+        customer_notes: notes,
+        items: cart.map(item => ({
+            id: Number(item.id),
+            quantity: Number(item.qty)
+        })),
+        payment_method: "wave"
     };
 
-    const checkoutButton =
-        document.querySelector(
-            '[onclick="checkout()"]'
+    try {
+        if (checkoutButton) {
+            checkoutButton.disabled = true;
+            checkoutButton.innerHTML =
+                '<i class="fa-solid fa-spinner fa-spin"></i> Création du paiement...';
+        }
+
+        const response = await fetch(
+            `${API_BASE_URL}/create-checkout-session`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            }
         );
 
-    const originalButtonText =
-        checkoutButton
-            ? checkoutButton.innerHTML
-            : "";
-
-    try {
-
-        if (checkoutButton) {
-
-            checkoutButton.disabled =
-                true;
-
-            checkoutButton.innerHTML =
-                '<i class="fa-solid fa-spinner fa-spin"></i> Ouverture du paiement...';
-        }
-
-        const response =
-            await fetch(
-                `${API_BASE_URL}/create-checkout-session`,
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body:
-                        JSON.stringify(
-                            payload
-                        )
-                }
-            );
-
-        let data;
-
-        try {
-
-            data =
-                await response.json();
-
-        } catch (jsonError) {
-
-            throw new Error(
-                "Le serveur a renvoyé une réponse invalide."
-            );
-        }
+        const data = await response.json();
 
         if (!response.ok) {
-
             throw new Error(
                 data.detail ||
                 data.message ||
@@ -1439,31 +1345,23 @@ async function checkout() {
             );
         }
 
-        if (
-            !data ||
-            typeof data.url !==
-                "string" ||
-            !data.url.trim()
-        ) {
-
-            throw new Error(
-                "PayDunya n'a pas fourni de lien de paiement."
+        if (data.order_id) {
+            localStorage.setItem(
+                "jnr_last_order_id",
+                data.order_id
             );
         }
 
-        /*
-            REDIRECTION DIRECTE VERS PAYDUNYA
-        */
+        if (!data.url) {
+            throw new Error(
+                "Le serveur n'a pas fourni de lien de paiement."
+            );
+        }
 
-        window.location.href =
-            data.url;
+        window.location.href = data.url;
 
     } catch (error) {
-
-        console.error(
-            "Erreur paiement PayDunya :",
-            error
-        );
+        console.error("CHECKOUT ERROR:", error);
 
         alert(
             "Impossible de lancer le paiement.\n\n" +
@@ -1471,12 +1369,8 @@ async function checkout() {
         );
 
         if (checkoutButton) {
-
-            checkoutButton.disabled =
-                false;
-
-            checkoutButton.innerHTML =
-                originalButtonText;
+            checkoutButton.disabled = false;
+            checkoutButton.innerHTML = originalButtonText;
         }
     }
 }
