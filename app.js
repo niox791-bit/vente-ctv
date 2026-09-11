@@ -1284,42 +1284,68 @@ function formatPrice(number) {
    PAIEMENT PAYDUNYA
    CONSERVÉ
 ========================================================= */
+/* =========================================================
+   PAIEMENT BICTORYS
+========================================================= */
+
 async function checkout() {
+
     if (cart.length === 0) {
         alert("Votre panier est vide.");
         return;
     }
 
-    const name = document.getElementById("client-name")?.value.trim() || "";
-    const phone = document.getElementById("client-phone")?.value.trim() || "";
-    const address = document.getElementById("client-address")?.value.trim() || "";
-    const notes = document.getElementById("client-notes")?.value.trim() || "";
+    const name =
+        document.getElementById("client-name")
+            ?.value.trim() || "";
+
+    const phone =
+        document.getElementById("client-phone")
+            ?.value.trim() || "";
+
+    const address =
+        document.getElementById("client-address")
+            ?.value.trim() || "";
+
+    const notes =
+        document.getElementById("client-notes")
+            ?.value.trim() || "";
 
     if (!name || !phone || !address) {
-        alert("Veuillez remplir votre nom, téléphone et adresse.");
+        alert(
+            "Veuillez remplir votre nom, téléphone et adresse."
+        );
         return;
     }
 
-    const checkoutButton = document.querySelector('[onclick="checkout()"]');
-    const originalButtonText = checkoutButton
-        ? checkoutButton.innerHTML
-        : "";
+    const checkoutButton =
+        document.querySelector(
+            '[onclick="checkout()"]'
+        );
+
+    const originalButtonText =
+        checkoutButton
+            ? checkoutButton.innerHTML
+            : "";
 
     const payload = {
         customer_name: name,
         customer_phone: phone,
         customer_address: address,
         customer_notes: notes,
+
         items: cart.map(item => ({
             id: Number(item.id),
             quantity: Number(item.qty)
-        })),
-        payment_method: "wave"
+        }))
     };
 
     try {
+
         if (checkoutButton) {
+
             checkoutButton.disabled = true;
+
             checkoutButton.innerHTML =
                 '<i class="fa-solid fa-spinner fa-spin"></i> Création du paiement...';
         }
@@ -1328,40 +1354,69 @@ async function checkout() {
             `${API_BASE_URL}/create-checkout-session`,
             {
                 method: "POST",
+
                 headers: {
                     "Content-Type": "application/json"
                 },
+
                 body: JSON.stringify(payload)
             }
         );
 
-        const data = await response.json();
+        const data =
+            await response.json();
 
         if (!response.ok) {
+
             throw new Error(
-                data.detail ||
-                data.message ||
-                "Impossible de créer le paiement."
+                typeof data.detail === "string"
+                    ? data.detail
+                    : data.message ||
+                      "Impossible de créer le paiement."
             );
         }
 
         if (data.order_id) {
+
             localStorage.setItem(
                 "jnr_last_order_id",
                 data.order_id
             );
         }
 
-        if (!data.url) {
+        /*
+         * Le backend Bictorys renvoie
+         * le lien vers la page de paiement.
+         */
+
+        const paymentUrl =
+            data.payment_url ||
+            data.link ||
+            data.checkout_url ||
+            data.checkoutUrl ||
+            data.url;
+
+        if (!paymentUrl) {
+
+            console.error(
+                "Réponse Bictorys :",
+                data
+            );
+
             throw new Error(
-                "Le serveur n'a pas fourni de lien de paiement."
+                "Bictorys n'a pas fourni de lien de paiement."
             );
         }
 
-        window.location.href = data.url;
+        window.location.href =
+            paymentUrl;
 
     } catch (error) {
-        console.error("CHECKOUT ERROR:", error);
+
+        console.error(
+            "CHECKOUT ERROR:",
+            error
+        );
 
         alert(
             "Impossible de lancer le paiement.\n\n" +
@@ -1369,13 +1424,15 @@ async function checkout() {
         );
 
         if (checkoutButton) {
-            checkoutButton.disabled = false;
-            checkoutButton.innerHTML = originalButtonText;
+
+            checkoutButton.disabled =
+                false;
+
+            checkoutButton.innerHTML =
+                originalButtonText;
         }
     }
 }
-
-
 /* =========================================================
    HAPTIC TELEGRAM
 ========================================================= */
