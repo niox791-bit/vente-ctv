@@ -208,6 +208,7 @@ const products = [
 
 /* =========================================================
    CONFIGURATION BACKEND
+   NE PAS MODIFIER
 ========================================================= */
 
 const API_BASE_URL = "https://jnr-backend-1.onrender.com";
@@ -228,28 +229,50 @@ let cart = [];
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    loadCart();
+    try {
 
-    initTelegram();
+        loadCart();
 
-    renderProducts(products);
+        initTelegram();
 
-    updateCartUI();
+        renderProducts(products);
 
-    initImageZoom();
+        updateCartUI();
 
-    handlePaymentReturn();
+        initImageZoom();
 
-    setTimeout(() => {
+    } catch (error) {
 
-        const loadingScreen =
-            document.getElementById("loading-screen");
+        console.error(
+            "Erreur pendant l'initialisation de JNR Shop :",
+            error
+        );
 
-        if (loadingScreen) {
-            loadingScreen.classList.add("loaded");
-        }
+    } finally {
 
-    }, 1900);
+        /*
+         * Le chargement doit toujours disparaître,
+         * même si une fonction rencontre une erreur.
+         */
+
+        setTimeout(() => {
+
+            const loadingScreen =
+                document.getElementById(
+                    "loading-screen"
+                );
+
+            if (loadingScreen) {
+
+                loadingScreen.classList.add(
+                    "loaded"
+                );
+            }
+
+            document.body.style.overflow = "";
+
+        }, 1900);
+    }
 });
 
 
@@ -341,71 +364,6 @@ function loadCart() {
 
         cart = [];
     }
-}
-
-
-/* =========================================================
-   RETOUR APRÈS PAIEMENT BICTORYS
-========================================================= */
-
-function handlePaymentReturn() {
-
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
-
-    const payment =
-        params.get("payment");
-
-    if (payment !== "success") {
-        return;
-    }
-
-    /*
-     * Bictorys a redirigé l'utilisateur
-     * vers la Mini App après le paiement.
-     *
-     * On supprime maintenant le panier
-     * local enregistré sur cet appareil.
-     */
-
-    cart = [];
-
-    localStorage.removeItem(
-        CART_STORAGE_KEY
-    );
-
-    updateCartUI();
-
-    /*
-     * On conserve l'identifiant de commande
-     * jusqu'à ce que le retour soit traité,
-     * puis on le nettoie.
-     */
-
-    localStorage.removeItem(
-        "jnr_last_order_id"
-    );
-
-    /*
-     * Nettoyage de l'URL afin que :
-     *
-     * ?payment=success&order=...
-     *
-     * ne reste pas affiché.
-     */
-
-    window.history.replaceState(
-        {},
-        document.title,
-        window.location.pathname
-    );
-
-    alert(
-        "✅ Paiement effectué !\n\n" +
-        "Votre commande a bien été enregistrée."
-    );
 }
 
 
@@ -784,5 +742,844 @@ function closeProductModal(event) {
         );
     }
 
-    document.body.
+    document.body.style.overflow =
+        "";
+}
+
+
+/* =========================================================
+   ZOOM
+========================================================= */
+
+function initImageZoom() {
+
+    const image =
+        document.getElementById(
+            "detail-image"
+        );
+
+    if (!image) {
+        return;
+    }
+
+    image.addEventListener(
+        "click",
+        event => {
+
+            event.stopPropagation();
+
+            const zoomImage =
+                document.getElementById(
+                    "zoom-image"
+                );
+
+            const zoomOverlay =
+                document.getElementById(
+                    "image-zoom"
+                );
+
+            if (
+                !zoomImage ||
+                !zoomOverlay
+            ) {
+                return;
+            }
+
+            zoomImage.src =
+                image.src;
+
+            zoomImage.alt =
+                image.alt;
+
+            zoomOverlay.classList.remove(
+                "hidden"
+            );
+        }
+    );
+}
+
+
+function closeImageZoom() {
+
+    const zoom =
+        document.getElementById(
+            "image-zoom"
+        );
+
+    if (zoom) {
+
+        zoom.classList.add(
+            "hidden"
+        );
+    }
+}
+
+
+/* =========================================================
+   FILTRES
+========================================================= */
+
+function filterProducts(
+    type,
+    element
+) {
+
+    document
+        .querySelectorAll(".pill-btn")
+        .forEach(btn => {
+
+            btn.classList.remove(
+                "active"
+            );
+
+        });
+
+    if (element) {
+
+        element.classList.add(
+            "active"
+        );
+    }
+
+    let filtered = [];
+
+    if (type === "categories") {
+
+        filtered = [
+            ...products
+        ];
+    }
+
+    if (type === "liked") {
+
+        filtered =
+            [...products].sort(
+                (a, b) =>
+                    b.likes - a.likes
+            );
+    }
+
+    if (type === "new") {
+
+        filtered =
+            products.filter(
+                product =>
+                    product.category === "new"
+            );
+    }
+
+    renderProducts(
+        filtered
+    );
+}
+
+
+/* =========================================================
+   LIKE
+========================================================= */
+
+function toggleLike(
+    event,
+    id
+) {
+
+    event.stopPropagation();
+
+    const product =
+        products.find(
+            product =>
+                product.id === id
+        );
+
+    if (!product) {
+        return;
+    }
+
+    product.likes++;
+
+    const activeButton =
+        document.querySelector(
+            ".pill-btn.active"
+        );
+
+    if (
+        activeButton &&
+        activeButton.innerText
+            .toLowerCase()
+            .includes("plus aimé")
+    ) {
+
+        filterProducts(
+            "liked",
+            activeButton
+        );
+
+    } else {
+
+        renderProducts(
+            products
+        );
+    }
+
+    haptic("medium");
+}
+
+
+/* =========================================================
+   AJOUT AU PANIER
+========================================================= */
+
+function addToCart(id) {
+
+    const product =
+        products.find(
+            product =>
+                product.id === id
+        );
+
+    if (!product) {
+        return;
+    }
+
+    if (product.stock <= 0) {
+
+        alert(
+            "Ce produit est en rupture de stock."
+        );
+
+        return;
+    }
+
+    const item =
+        cart.find(
+            item =>
+                item.id === id
+        );
+
+    if (item) {
+
+        if (
+            item.qty >=
+            product.stock
+        ) {
+
+            alert(
+                "Vous avez atteint le stock disponible."
+            );
+
+            return;
+        }
+
+        item.qty++;
+
+    } else {
+
+        cart.push({
+            ...product,
+            qty: 1
+        });
+    }
+
+    saveCart();
+
+    updateCartUI();
+
+    haptic("success");
+
+    const badge =
+        document.getElementById(
+            "cart-count"
+        );
+
+    if (badge) {
+
+        badge.classList.remove(
+            "bump"
+        );
+
+        void badge.offsetWidth;
+
+        badge.classList.add(
+            "bump"
+        );
+    }
+
+    showCartPopup();
+}
+
+
+/* =========================================================
+   POPUP PANIER
+========================================================= */
+
+function showCartPopup() {
+
+    const popup =
+        document.getElementById(
+            "cart-popup-overlay"
+        );
+
+    if (popup) {
+
+        popup.classList.remove(
+            "hidden"
+        );
+    }
+}
+
+
+function closeCartPopup(event) {
+
+    if (
+        event &&
+        event.target &&
+        event.target.id !==
+            "cart-popup-overlay"
+    ) {
+        return;
+    }
+
+    const popup =
+        document.getElementById(
+            "cart-popup-overlay"
+        );
+
+    if (popup) {
+
+        popup.classList.add(
+            "hidden"
+        );
+    }
+}
+
+
+function continueShopping() {
+
+    closeCartPopup();
+
+    const homeButton =
+        document.querySelector(
+            '.nav-item[onclick*="accueil"]'
+        );
+
+    switchTab(
+        "accueil",
+        homeButton
+    );
+}
+
+
+function goToCart() {
+
+    closeCartPopup();
+
+    const cartButton =
+        document.querySelector(
+            '.nav-item[onclick*="panier"]'
+        );
+
+    switchTab(
+        "panier",
+        cartButton
+    );
+}
+
+
+/* =========================================================
+   QUANTITÉ
+========================================================= */
+
+function updateQuantity(
+    id,
+    change
+) {
+
+    const item =
+        cart.find(
+            item =>
+                item.id === id
+        );
+
+    if (!item) {
+        return;
+    }
+
+    const product =
+        products.find(
+            product =>
+                product.id === id
+        );
+
+    if (!product) {
+        return;
+    }
+
+    if (
+        change > 0 &&
+        item.qty >= product.stock
+    ) {
+
+        alert(
+            "Vous avez atteint le stock disponible."
+        );
+
+        return;
+    }
+
+    item.qty += change;
+
+    if (item.qty <= 0) {
+
+        cart =
+            cart.filter(
+                item =>
+                    item.id !== id
+            );
+    }
+
+    saveCart();
+
+    updateCartUI();
+}
+
+
+/* =========================================================
+   PANIER
+========================================================= */
+
+function updateCartUI() {
+
+    const count =
+        cart.reduce(
+            (total, item) =>
+                total + item.qty,
+            0
+        );
+
+    const badge =
+        document.getElementById(
+            "cart-count"
+        );
+
+    if (badge) {
+
+        badge.textContent =
+            count;
+    }
+
+    const container =
+        document.getElementById(
+            "cart-items-container"
+        );
+
+    const summary =
+        document.getElementById(
+            "cart-summary"
+        );
+
+    if (
+        !container ||
+        !summary
+    ) {
+        return;
+    }
+
+    if (cart.length === 0) {
+
+        container.innerHTML = `
+            <div class="empty-cart">
+
+                <i
+                    class="fa-solid fa-basket-shopping fa-2x"
+                ></i>
+
+                <br><br>
+
+                Votre panier est vide.
+
+                <br>
+
+                Ajoutez un produit depuis l'accueil.
+
+            </div>
+        `;
+
+        summary.classList.add(
+            "hidden"
+        );
+
+        return;
+    }
+
+    container.innerHTML =
+        cart
+            .map(item => `
+
+                <div class="cart-item">
+
+                    <div class="cart-item-info">
+
+                        <img
+                            src="${item.image}"
+                            class="cart-item-img"
+                            alt="${escapeHtml(item.name)}"
+                        >
+
+                        <div class="cart-item-details">
+
+                            <h4>
+                                ${escapeHtml(item.name)}
+                            </h4>
+
+                            <span>
+                                ${item.price}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="qty-controls">
+
+                        <button
+                            class="qty-btn"
+                            onclick="updateQuantity(${item.id}, -1)"
+                            aria-label="Retirer"
+                        >
+                            −
+                        </button>
+
+                        <span class="qty-number">
+                            ${item.qty}
+                        </span>
+
+                        <button
+                            class="qty-btn"
+                            onclick="updateQuantity(${item.id}, 1)"
+                            aria-label="Ajouter"
+                        >
+                            +
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `)
+            .join("");
+
+    const subtotal =
+        cart.reduce(
+            (total, item) =>
+                total +
+                item.priceNum *
+                item.qty,
+            0
+        );
+
+    const shipping = 1500;
+
+    const total =
+        subtotal +
+        shipping;
+
+    const subtotalElement =
+        document.getElementById(
+            "subtotal-amount"
+        );
+
+    const totalElement =
+        document.getElementById(
+            "total-amount"
+        );
+
+    if (subtotalElement) {
+
+        subtotalElement.textContent =
+            `${formatPrice(subtotal)} FCFA`;
+    }
+
+    if (totalElement) {
+
+        totalElement.textContent =
+            `${formatPrice(total)} FCFA`;
+    }
+
+    summary.classList.remove(
+        "hidden"
+    );
+}
+
+
+/* =========================================================
+   PRIX
+========================================================= */
+
+function formatPrice(number) {
+
+    return Number(number)
+        .toLocaleString(
+            "fr-FR",
+            {
+                maximumFractionDigits: 0
+            }
+        );
+}
+
+
+/* =========================================================
+   PAIEMENT BICTORYS
+========================================================= */
+
+async function checkout() {
+
+    if (cart.length === 0) {
+
+        alert(
+            "Votre panier est vide."
+        );
+
+        return;
+    }
+
+    const name =
+        document.getElementById(
+            "client-name"
+        )?.value.trim() || "";
+
+    const phone =
+        document.getElementById(
+            "client-phone"
+        )?.value.trim() || "";
+
+    const address =
+        document.getElementById(
+            "client-address"
+        )?.value.trim() || "";
+
+    const notes =
+        document.getElementById(
+            "client-notes"
+        )?.value.trim() || "";
+
+    if (
+        !name ||
+        !phone ||
+        !address
+    ) {
+
+        alert(
+            "Veuillez remplir votre nom, téléphone et adresse."
+        );
+
+        return;
+    }
+
+    const checkoutButton =
+        document.querySelector(
+            '[onclick="checkout()"]'
+        );
+
+    const originalButtonText =
+        checkoutButton
+            ? checkoutButton.innerHTML
+            : "";
+
+    const payload = {
+
+        customer_name: name,
+
+        customer_phone: phone,
+
+        customer_address: address,
+
+        customer_notes: notes,
+
+        items:
+            cart.map(item => ({
+
+                id: Number(item.id),
+
+                quantity: Number(item.qty)
+
+            }))
+    };
+
+    try {
+
+        if (checkoutButton) {
+
+            checkoutButton.disabled =
+                true;
+
+            checkoutButton.innerHTML =
+                '<i class="fa-solid fa-spinner fa-spin"></i> Création du paiement...';
+        }
+
+        const response =
+            await fetch(
+                `${API_BASE_URL}/create-checkout-session`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(
+                            payload
+                        )
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+
+            throw new Error(
+                typeof data.detail === "string"
+                    ? data.detail
+                    : data.message ||
+                      "Impossible de créer le paiement."
+            );
+        }
+
+        if (data.order_id) {
+
+            localStorage.setItem(
+                "jnr_last_order_id",
+                data.order_id
+            );
+        }
+
+        const paymentUrl =
+            data.payment_url ||
+            data.link ||
+            data.checkout_url ||
+            data.checkoutUrl ||
+            data.url;
+
+        if (!paymentUrl) {
+
+            console.error(
+                "Réponse Bictorys :",
+                data
+            );
+
+            throw new Error(
+                "Bictorys n'a pas fourni de lien de paiement."
+            );
+        }
+
+        window.location.href =
+            paymentUrl;
+
+    } catch (error) {
+
+        console.error(
+            "CHECKOUT ERROR:",
+            error
+        );
+
+        alert(
+            "Impossible de lancer le paiement.\n\n" +
+            error.message
+        );
+
+        if (checkoutButton) {
+
+            checkoutButton.disabled =
+                false;
+
+            checkoutButton.innerHTML =
+                originalButtonText;
+        }
+    }
+}
+
+
+/* =========================================================
+   HAPTIC TELEGRAM
+========================================================= */
+
+function haptic(type) {
+
+    if (
+        window.Telegram &&
+        window.Telegram.WebApp &&
+        window.Telegram.WebApp.HapticFeedback
+    ) {
+
+        const hapticApi =
+            window.Telegram.WebApp
+                .HapticFeedback;
+
+        if (type === "success") {
+
+            hapticApi.notificationOccurred(
+                "success"
+            );
+
+        } else {
+
+            hapticApi.impactOccurred(
+                type
+            );
+        }
+    }
+}
+
+
+/* =========================================================
+   SÉCURITÉ AFFICHAGE TEXTE
+========================================================= */
+
+function escapeHtml(value) {
+
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+}
+
+
+/* =========================================================
+   FERMETURE AVEC ESC
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (event.key !== "Escape") {
+            return;
+        }
+
+        closeProductModal();
+
+        closeImageZoom();
+
+        closeCartPopup();
+    }
+);
 
